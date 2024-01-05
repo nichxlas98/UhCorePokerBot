@@ -40,11 +40,11 @@ export default new Command({
                 },
                 {
                     name: "Max Starting Cash",
-                    value: "maxStart"
+                    value: "maxJoin"
                 },
                 {
                     name: "Min Starting Cash",
-                    value: "minStart"
+                    value: "minJoin"
                 }
             ]
         },
@@ -115,19 +115,19 @@ export default new Command({
 
                 config.minRaise = parseInt(value);
                 break;
-            case "maxStart":
+            case "maxJoin":
                 if (isNaN(parseInt(value))) {
                     return interaction.followUp({ embeds: [ getErrorEmbed('Value must be a number.') ], ephemeral: true });
                 }
 
-                config.maxStart = parseInt(value);
+                config.maxJoin = parseInt(value);
                 break;
-            case "minStart":
+            case "minJoin":
                 if (isNaN(parseInt(value))) {
                     return interaction.followUp({ embeds: [ getErrorEmbed('Value must be a number.') ], ephemeral: true });
                 }
 
-                config.minStart = parseInt(value);
+                config.minJoin = parseInt(value);
                 break;
             default:
                 return interaction.followUp({ embeds: [ getErrorEmbed('Invalid setting.') ], ephemeral: true });
