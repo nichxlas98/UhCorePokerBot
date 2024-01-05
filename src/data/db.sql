@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id VARCHAR(200) NOT NULL,
+    username VARCHAR(200) NOT NULL,
+    master_account VARCHAR(200) NOT NULL,
+
+    profile_url VARCHAR(200) NOT NULL,
+    photo_id VARCHAR(200) NOT NULL,
+    firstname VARCHAR(200) NOT NULL,
+    lastname VARCHAR(200) NOT NULL,
+    age INTEGER NOT NULL,
+    
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
+    balance INTEGER NOT NULL DEFAULT 0,
+    debt INTEGER NOT NULL DEFAULT 0,
+
+    created_at VARCHAR(200) NOT NULL
+)
