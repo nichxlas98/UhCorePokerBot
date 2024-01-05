@@ -1,6 +1,6 @@
 import { Client, TextChannel } from "discord.js";
 import { initializeDatabase, initializeUsers } from "../data/database";
-import { Logger } from "../logs/Logger";
+import { LogManager } from "../managers/LogManager";
 import { Event } from "../structures/Event";
 
 const sendInformationMessage = async (client: Client) => {
@@ -51,7 +51,7 @@ export default new Event("ready", async (client) => {
         }]
     });
 
-    const logger = Logger.getInstance();
+    const logger = LogManager.getInstance();
     logger.log(`Bot is online under the name: ${client.user.username}, ID: ${client.user.id}`);
 
     await initializeUsers();

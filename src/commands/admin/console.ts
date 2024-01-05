@@ -1,5 +1,5 @@
 import { Command } from "../../structures/Command";
-import { Logger } from "../../logs/Logger";
+import { LogManager } from "../../managers/LogManager";
 import { exec } from 'child_process';
 import fs from 'fs';
 
@@ -20,7 +20,7 @@ export default new Command({
         }
 
         const run = interaction.options.getString("run");
-        const logger = Logger.getInstance();
+        const logger = LogManager.getInstance();
         if (run === "all") {
             const allLogs = logger.getLogs();
             fs.writeFile('bot-logs.txt', allLogs, async (err) => {

@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
-import { Logger } from "../../logs/Logger";
+import { LogManager } from "../../managers/LogManager";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
 export default new Command({
@@ -108,6 +108,6 @@ export default new Command({
         userExists.sync();
 
         await interaction.followUp({ embeds: [ new MessageEmbed().setTitle("User verified!").setColor(0x33FF33).setDescription("User verified successfully!") ], ephemeral: true });
-        Logger.getInstance().log(`User verified: ${userExists.userId}, by ${interaction.user.username}`, 1);
+        LogManager.getInstance().log(`User verified: ${userExists.userId}, by ${interaction.user.username}`, 1);
     },
 });

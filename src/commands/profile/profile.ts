@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Command } from "../../structures/Command";
 import PokerUser from "../../models/PokerUser";
-import { Logger } from "../../logs/Logger";
+import { LogManager } from "../../managers/LogManager";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
 export default new Command({
@@ -85,6 +85,6 @@ export default new Command({
         }
 
         await interaction.followUp({ embeds: [ embed ], ephemeral: true });
-        Logger.getInstance().log(`Profile viewed: ${foundUser.userName} (${foundUser.userId}), by ${PokerUser.findUserByUserId(interaction.user.id).userName} (${interaction.user.username})`, 1);
+        LogManager.getInstance().log(`Profile viewed: ${foundUser.userName} (${foundUser.userId}), by ${PokerUser.findUserByUserId(interaction.user.id).userName} (${interaction.user.username})`, 1);
     },
 });

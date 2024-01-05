@@ -4,19 +4,19 @@ enum LogType {
     ERROR = "[ERROR]"
 }
 
-export class Logger {
-    private static instance: Logger | null = null;
+export class LogManager {
+    private static instance: LogManager | null = null;
     private logs: string[];
 
     private constructor() {
         this.logs = [];
     }
 
-    public static getInstance(): Logger {
-        if (!Logger.instance) {
-            Logger.instance = new Logger();
+    public static getInstance(): LogManager {
+        if (!LogManager.instance) {
+            LogManager.instance = new LogManager();
         }
-        return Logger.instance;
+        return LogManager.instance;
     }
 
     log(message: string, type?: number): void {

@@ -1,7 +1,7 @@
 import { MessageEmbed, TextBasedChannel, TextChannel } from "discord.js";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
-import { Logger } from "../../logs/Logger";
+import { LogManager } from "../../managers/LogManager";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
 export default new Command({
@@ -123,6 +123,6 @@ export default new Command({
 
         await (channel as TextBasedChannel).send({ embeds: [ embed ] });
         await interaction.followUp({ content: 'Request sent successfully! Your request should be approved in a brief moment, or you may be asked to correct a specific field of information.\n**If you have any questions, feel free to contact <@315272242529304587> directly for more information.\n\n**', embeds: [ embed ], ephemeral: true });
-        Logger.getInstance().log(`Profile verification requested: ${request.username} (${request.master}), by ${interaction.user.username} (${interaction.user.id})`, 1);
+        LogManager.getInstance().log(`Profile verification requested: ${request.username} (${request.master}), by ${interaction.user.username} (${interaction.user.id})`, 1);
     },
 });

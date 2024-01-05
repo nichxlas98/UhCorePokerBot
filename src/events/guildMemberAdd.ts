@@ -1,5 +1,5 @@
 import { Event } from "../structures/Event";
-import { Logger } from "../logs/Logger";
+import { LogManager } from "../managers/LogManager";
 import { syncUser } from "../data/database";
 import PokerUser from "../models/PokerUser";
 
@@ -15,5 +15,5 @@ export default new Event("guildMemberAdd", async (member) => {
     const unregisteredRole = guild.roles.cache.find(role => role.id === '1191654861238972446');
     member.roles.add(unregisteredRole);
 
-    Logger.getInstance().log(`User joined: ${member.user.username} with ID: ${member.user.id}`, 1);
+    LogManager.getInstance().log(`User joined: ${member.user.username} with ID: ${member.user.id}`, 1);
 });

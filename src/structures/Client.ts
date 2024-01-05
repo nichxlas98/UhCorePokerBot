@@ -10,7 +10,7 @@ const glob = require("glob");
 import { promisify } from "util";
 import { RegisterCommandsOptions } from "../typings/client";
 import { Event } from "./Event";
-import { Logger } from "../logs/Logger";
+import { LogManager } from "../managers/LogManager";
 
 
 const globPromise = glob.sync;
@@ -31,7 +31,7 @@ export class ExtendedClient extends Client {
     }
 
     async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
-        const logger = Logger.getInstance();
+        const logger = LogManager.getInstance();
         if (guildId) {
             this.guilds.cache.get(guildId)?.commands.set(commands);
             logger.log(`Registering commands to ${guildId}`);
