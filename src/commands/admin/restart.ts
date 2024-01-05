@@ -19,6 +19,7 @@ export default new Command({
 
         const util = require('util');
         const exec = util.promisify(childProcess.exec);
+        const promisifiedExec = (cmd) => exec(cmd, { encoding: 'utf-8' });
 
         const logger = Logger.getInstance();
         await interaction.deleteReply();
@@ -37,20 +38,19 @@ export default new Command({
             }, 30000);
         });
 
-        exec('cd ~', (err, stdout, stderr) => {
-            console.log(stdout);
-            console.log(stderr);
-            console.log(err);
-
+        await promisifiedExec('cd ~').then((result) => {
+            console.log(result.stdout);
+            console.error(result.stderr);
+        
             logger.log("Reloading...");
         });
-        exec('/home/ubuntu/discord_run.sh', (err, stdout, stderr) => {
-            console.log(stdout);
-            console.log(stderr);
-            console.log(err);
-
+        
+        await promisifiedExec('/home/ubuntu/discord_run.sh').then((result) => {
+            console.log(result.stdout);
+            console.error(result.stderr);
+        
             logger.log("Running restart script.");
-
+        
             // Exit the Node.js program
             process.exit(0);
         });
