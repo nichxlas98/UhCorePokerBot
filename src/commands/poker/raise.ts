@@ -4,6 +4,7 @@ import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { GamePhase, GameState, PlayerAction } from "../../enums/States";
 import { getErrorEmbed } from "../../utils/MessageUtils";
+import ConfigurationManager from "../../managers/ConfigManager";
 
 
 export default new Command({
@@ -45,16 +46,16 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('It is not your turn to raise/place a starting bet.') ], ephemeral: true });
         }
 
-        //TODO: Check if amount is more than max starting bet. (should be like $500 max)
+        const config = new ConfigurationManager().loadConfig();
 
         if (foundTable.gamePhase === GamePhase.BLIND && foundTable.winningPool === 0) {
 
-            if (amount > 200) {
-                return interaction.followUp({ embeds: [ getErrorEmbed('The maximum starting bet is $200.') ], ephemeral: true });
+            if (amount > config.maxStart) {
+                return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum starting bet is $${config.maxStart}.`) ], ephemeral: true });
             }
             
-            if (amount < 50) {
-                return interaction.followUp({ embeds: [ getErrorEmbed('The minimum starting bet is $50.') ], ephemeral: true });
+            if (amount < config.minStart) {
+                return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum starting bet is $${config.minStart}.`) ], ephemeral: true });
             }
 
             pokerPlayer.cash -= amount;
@@ -70,12 +71,12 @@ export default new Command({
             return;
         }
 
-        if (amount > 200) {
-            return interaction.followUp({ embeds: [ getErrorEmbed('The maximum raise amount is $200.') ], ephemeral: true });
+        if (amount > config.maxRaise) {
+            return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum raise amount is $${config.maxRaise}.`) ], ephemeral: true });
         }
 
-        if (amount < 50) {
-            return interaction.followUp({ embeds: [ getErrorEmbed('The minimum raise amount is $50.') ], ephemeral: true });
+        if (amount < config.minRaise) {
+            return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum raise amount is $${config.minRaise}.`) ], ephemeral: true });
         }
 
         pokerPlayer.cash -= amount;
