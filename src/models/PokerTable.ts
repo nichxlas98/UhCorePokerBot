@@ -7,6 +7,8 @@ import { Cards } from "../enums/Cards";
 import PokerPlayer from "./PokerPlayer";
 import exp from "constants";
 import { getGameWinners, getHandType } from "../utils/CalculateUtils";
+import ConfigurationManager from "../managers/ConfigManager";
+import { saveGame } from "../data/database";
 
 const tables = new List<PokerTable>();
 
@@ -41,7 +43,7 @@ class PokerTable {
     private currentPlayer: string = '';
 
     private eventMessage: Message;
-    private autoFoldTimeout;
+    private autoFoldTimeout: string | number | NodeJS.Timeout;
 
     constructor(gameId: string, channel: TextChannel) {
         this.gameId = gameId;
@@ -77,6 +79,7 @@ class PokerTable {
     }
 
     static deleteTable(table: PokerTable) {
+        saveGame(table);
         table.channel.delete();
         tables.remove(tables.find(t => t.gameId === table.gameId));
     }
@@ -409,8 +412,7 @@ class PokerTable {
     
                 this.channel.send('**[GAME]** Game ended (lack of players/empty pot)...\nThis channel will be deleted in 60 seconds!');
                 setTimeout(() => {
-                    this.channel.delete();
-                    tables.remove(this);
+                    PokerTable.deleteTable(this);
                 }, 60 * 1000);
             }, 20 * 1000);
         }
@@ -421,11 +423,13 @@ class PokerTable {
         const futureTime = new Date(now.getTime() + 120 * 1000);
         const timestamp = Math.floor(futureTime.getTime() / 1000);
 
+        const config = new ConfigurationManager().loadConfig();
+
         const embed = new MessageEmbed()
         .setTitle(`TURN — ${player.username}`)
         .setColor(0x808080)
         .setDescription(`It's ${player.username}'s turn!\n${expectedAction}`)
-        .addFields({ name: 'Round', value: `The ${this.gamePhase}`, inline: true }, { name: 'Cash Left', value: `$${player.cash}`, inline: true }, { name: 'Time Left', value: `They'll auto-fold <t:${timestamp}:R>`, inline: true }, { name: 'Players', value: `${this.players.length()}/8`, inline: true }, { name: 'Pot', value: `$${this.winningPool}`, inline: true });
+        .addFields({ name: 'Round', value: `The ${this.gamePhase}`, inline: true }, { name: 'Cash Left', value: `$${player.cash}`, inline: true }, { name: 'Time Left', value: `They'll auto-fold <t:${timestamp}:R>`, inline: true }, { name: 'Players', value: `${this.players.length()}/${config.maxPlayers}`, inline: true }, { name: 'Pot', value: `$${this.winningPool}`, inline: true });
 
         if (!this.turnMessage) {
             this.turnMessage = await this.channel.send({ embeds: [embed] });

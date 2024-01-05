@@ -16,3 +16,12 @@ CREATE TABLE IF NOT EXISTS users (
 
     created_at VARCHAR(200) NOT NULL
 )
+
+CREATE TABLE IF NOT EXISTS games (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id VARCHAR(200) NOT NULL,
+    players VARCHAR(200) NOT NULL,
+    chat_logs VARCHAR(max) NOT NULL,
+    
+    created_at VARCHAR(200) NOT NULL
+)
