@@ -67,7 +67,7 @@ export default new Command({
 
         const config = new ConfigurationManager().loadConfig();
         if (!setting) {
-            return interaction.followUp({ embeds: [ getErrorEmbed(`Settings -\n\n**Max Players**: ${config.maxPlayers}\n**Max Starting Bets**: ${config.maxStart}\n**Min Starting Bets**: ${config.minStart}\n**Max Raise**: ${config.maxRaise}\n**Min Raise**: ${config.minRaise}\n**Max Starting Cash**: ${config.maxStart}\n**Min Starting Cash**: ${config.minStart}\n**Game Creation**: ${config.gameCreation}`) ], ephemeral: true });
+            return interaction.followUp({ embeds: [ getErrorEmbed(`\n**Max Players**: ${config.maxPlayers}\n**Max Starting Bets**: ${config.maxStart}\n**Min Starting Bets**: ${config.minStart}\n**Max Raise**: ${config.maxRaise}\n**Min Raise**: ${config.minRaise}\n**Max Starting Cash**: ${config.maxStart}\n**Min Starting Cash**: ${config.minStart}\n**Game Creation**: ${config.gameCreation}`).setTitle('Settings') ], ephemeral: true });
         }
 
 
