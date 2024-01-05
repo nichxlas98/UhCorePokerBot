@@ -41,13 +41,13 @@ export default new Command({
 
             logger.log("Reloading...");
         });
-        exec('/home/debian/discord_run.sh', (err, stdout, stderr) => {
+        exec('/home/ubuntu/discord_run.sh', (err, stdout, stderr) => {
             console.log(stdout);
             console.log(stderr);
             console.log(err);
 
             logger.log("Running restart script.");
-            
+
             // Exit the Node.js program
             process.exit(0);
         });
