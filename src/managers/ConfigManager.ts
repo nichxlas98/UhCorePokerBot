@@ -16,7 +16,7 @@ export default class ConfigurationManager {
   private configFilePath: string;
 
   constructor() {
-    this.configFilePath = path.resolve('../config/config.json');
+    this.configFilePath = path.resolve('./config/config.json');
   }
 
   loadConfig(): Config {
@@ -31,11 +31,19 @@ export default class ConfigurationManager {
   }
 
   saveConfig(config: Config): void {
-    const data = JSON.stringify(config, null, 2);
-    fs.writeFileSync(this.configFilePath, data, 'utf-8');
-    console.log('Config file saved successfully.');
+    try {
+      // Ensure the directory exists before writing the file
+      const configDir = path.dirname(this.configFilePath);
+      fs.mkdirSync(configDir, { recursive: true });
+  
+      const data = JSON.stringify(config, null, 2);
+      fs.writeFileSync(this.configFilePath, data, 'utf-8');
+      console.log('Config file saved successfully.');
+    } catch (error) {
+      console.error('Error saving config file:', error.message);
+    }
   }
-
+  
   private getDefaultConfig(): Config {
     return {
       gameCreation: true,
