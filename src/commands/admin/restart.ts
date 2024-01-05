@@ -1,4 +1,4 @@
-import { Logger } from "../../logs/Logger";
+import { LogManager } from "../../managers/LogManager";
 import { Command } from "../../structures/Command";
 import { exec } from 'child_process';
 
@@ -17,7 +17,7 @@ export default new Command({
             return interaction.followUp({ content: "You do not have permission to use this command.", ephemeral: true });
         }
 
-        const logger = Logger.getInstance();
+        const logger = LogManager.getInstance();
         await interaction.deleteReply();
         await interaction.followUp({ content: "Restarting...", ephemeral: true }).then(() => {
             interaction.client.user.setPresence({
