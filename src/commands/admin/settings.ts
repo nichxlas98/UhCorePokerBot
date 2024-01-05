@@ -12,7 +12,7 @@ export default new Command({
             name: "setting",
             description: "The setting to edit.",
             type: 3,
-            required: true,
+            required: false,
             choices: [
                 {
                     name: "Game Creation",
@@ -52,7 +52,7 @@ export default new Command({
             name: "value",
             description: "The value to set the setting to.",
             type: 3,
-            required: true
+            required: false
         }
     ],
     run: async ({ interaction }) => {
@@ -66,6 +66,10 @@ export default new Command({
         const value = interaction.options.getString("value");
 
         const config = new ConfigurationManager().loadConfig();
+        if (!setting) {
+            return interaction.followUp({ embeds: [ getErrorEmbed(`Settings -\n\n**Max Players**: ${config.maxPlayers}\n**Max Starting Bets**: ${config.maxStart}\n**Min Starting Bets**: ${config.minStart}\n**Max Raise**: ${config.maxRaise}\n**Min Raise**: ${config.minRaise}\n**Max Starting Cash**: ${config.maxStart}\n**Min Starting Cash**: ${config.minStart}\n**Game Creation**: ${config.gameCreation}`) ], ephemeral: true });
+        }
+
 
         switch (setting) {
             case "gameCreation":
