@@ -24,8 +24,11 @@ export default class ConfigurationManager {
       const data = fs.readFileSync(this.configFilePath, 'utf-8');
       return JSON.parse(data);
     } catch (error) {
-      // If the file doesn't exist or is invalid JSON, return a default configuration
-      console.error('Error loading config file:', error.message);
+      if (error.code === 'ENOENT') {
+        console.warn('Config file not found. Using default configuration.');
+      } else {
+        console.error('Error loading config file:', error.message);
+      }
       return this.getDefaultConfig();
     }
   }
