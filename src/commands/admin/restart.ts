@@ -1,6 +1,6 @@
 import { Logger } from "../../logs/Logger";
 import { Command } from "../../structures/Command";
-import * as childProcess from 'child_process';
+import { exec } from 'child_process';
 
 function wait(ms: number): Promise<void> {
     return new Promise((resolve) => {
@@ -16,10 +16,6 @@ export default new Command({
             await interaction.deleteReply();
             return interaction.followUp({ content: "You do not have permission to use this command.", ephemeral: true });
         }
-
-        const util = require('util');
-        const exec = util.promisify(childProcess.exec);
-        const promisifiedExec = (cmd) => exec(cmd, { encoding: 'utf-8' });
 
         const logger = Logger.getInstance();
         await interaction.deleteReply();
@@ -38,19 +34,20 @@ export default new Command({
             }, 30000);
         });
 
-        await promisifiedExec('cd ~').then((result) => {
-            console.log(result.stdout);
-            console.error(result.stderr);
-        
+        exec('cd ~', (err, stdout, stderr) => {
+            console.log(stdout);
+            console.log(stderr);
+            console.log(err);
+
             logger.log("Reloading...");
         });
-        
-        await promisifiedExec('/home/ubuntu/discord_run.sh').then((result) => {
-            console.log(result.stdout);
-            console.error(result.stderr);
-        
+        exec('/home/ubuntu/discord_run.sh', (err, stdout, stderr) => {
+            console.log(stdout);
+            console.log(stderr);
+            console.log(err);
+
             logger.log("Running restart script.");
-        
+            
             // Exit the Node.js program
             process.exit(0);
         });
