@@ -1,6 +1,6 @@
 import { Logger } from "../../logs/Logger";
 import { Command } from "../../structures/Command";
-import { exec } from 'child_process';
+import * as childProcess from 'child_process';
 
 function wait(ms: number): Promise<void> {
     return new Promise((resolve) => {
@@ -16,6 +16,9 @@ export default new Command({
             await interaction.deleteReply();
             return interaction.followUp({ content: "You do not have permission to use this command.", ephemeral: true });
         }
+
+        const util = require('util');
+        const exec = util.promisify(childProcess.exec);
 
         const logger = Logger.getInstance();
         await interaction.deleteReply();
