@@ -76,6 +76,11 @@ class PokerTable {
         return tables;
     }
 
+    static deleteTable(table: PokerTable) {
+        table.channel.delete();
+        tables.remove(tables.find(t => t.gameId === table.gameId));
+    }
+
     async sendCommunityCards(cards: Cards[]) {
         const cardsUrl = await getUrlFromImages(cards, 'output.png');
         this.communityCardsUrl = cardsUrl;
