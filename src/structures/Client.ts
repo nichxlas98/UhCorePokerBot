@@ -13,7 +13,7 @@ import { Event } from "./Event";
 import { Logger } from "../logs/Logger";
 
 
-const globPromise = promisify(glob);
+const globPromise = glob.sync;
 
 export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
