@@ -6,11 +6,12 @@ import {
     ActivityType
 } from "discord.js";
 import { CommandType } from "../typings/Command";
-import glob from "glob";
+const glob = require("glob");
 import { promisify } from "util";
 import { RegisterCommandsOptions } from "../typings/client";
 import { Event } from "./Event";
 import { Logger } from "../logs/Logger";
+
 
 const globPromise = promisify(glob);
 
