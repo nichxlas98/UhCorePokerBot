@@ -142,9 +142,11 @@ export const saveGame = (table: PokerTable) => {
     const dateString = `${day}-${month}-${year}-${hours}`;
 
 
-    const chatLogs = fs.writeFileSync(path.resolve(`./src/data/games/${dateString}-${table.gameId}.json`), JSON.stringify(table.gameChat.asArray()));
+    const logs = `${dateString}-${table.gameId}`;
+    const filePath = path.resolve(`./src/data/games/${logs}.json`);
+    fs.writeFileSync(path.resolve(filePath), JSON.stringify(table.gameChat.asArray()));
 
-    db.run(query, [table.gameId, table.players, chatLogs, Date.now()], (err) => {
+    db.run(query, [table.gameId, table.players, logs, Date.now()], (err) => {
         if (err) LogManager.getInstance().log(`Error inserting or updating game: ${err}`, 3);
         else LogManager.getInstance().log(`Game created successfully: ${table.gameId}`, 1);
     });
