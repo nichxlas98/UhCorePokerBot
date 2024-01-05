@@ -3,6 +3,7 @@ import { Command } from "../../structures/Command";
 import PokerUser from "../../models/PokerUser";
 import PokerTable from "../../models/PokerTable";
 import { getErrorEmbed } from "../../utils/MessageUtils";
+import ConfigurationManager from "../../managers/ConfigManager";
 
 export default new Command({
 
@@ -27,7 +28,9 @@ export default new Command({
 
         const cash = interaction.options.getInteger("cash");
 
-        if (cash < 300 || cash > 1000) {
+        const config = new ConfigurationManager().loadConfig();
+
+        if (cash < config.minJoin || cash > config.maxJoin) {
             return interaction.followUp({ embeds: [ getErrorEmbed('The cash you join with must be between $300 and $1000.') ], ephemeral: true });
         }
 
@@ -53,8 +56,8 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('You are already in that poker game.') ], ephemeral: true });
         }
 
-        if (foundTable.joined.length() >= 8) {
-            return interaction.followUp({ embeds: [ getErrorEmbed('That poker game is full.') ], ephemeral: true });
+        if (foundTable.joined.length() >= config.maxPlayers) {
+            return interaction.followUp({ embeds: [ getErrorEmbed('That poker game is full. ' + `(${config.maxPlayers}/${config.maxPlayers} players)`) ], ephemeral: true });
         }
 
         if (cash > user.balance) {
