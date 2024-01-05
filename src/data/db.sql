@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     debt INTEGER NOT NULL DEFAULT 0,
 
     created_at VARCHAR(200) NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS games (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,4 +24,4 @@ CREATE TABLE IF NOT EXISTS games (
     chat_logs VARCHAR(max) NOT NULL,
     
     created_at VARCHAR(200) NOT NULL
-)
+);
