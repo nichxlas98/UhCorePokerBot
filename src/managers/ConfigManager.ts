@@ -50,8 +50,8 @@ export default class ConfigurationManager {
   private getDefaultConfig(): Config {
     return {
       gameCreation: true,
-      maxRaise: 50,
-      minRaise: 200,
+      maxRaise: 200,
+      minRaise: 50,
       maxStart: 200,
       minStart: 50,
       maxJoin: 1000,
