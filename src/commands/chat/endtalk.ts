@@ -38,7 +38,7 @@ export default new Command({
             await channel.parent.delete();
         }
 
+        await interaction.followUp({ content: "Ticket ended.", ephemeral: true });
         await channel.delete();
-        return interaction.followUp({ content: "Ticket ended.", ephemeral: true });
     },
 });
