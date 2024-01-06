@@ -59,8 +59,10 @@ export default new Event("ready", async (client) => {
 
     (channel as TextChannel).messages.fetch({ limit: 10 }).then(async (messages) => {
         messages.forEach(async (message) => {
-            if (message.embeds[0].title === 'Account Request') {
-                await message.reply(`<@${message.author.id}>'s account has been registered successfully!'`);
+            if (message.embeds) {
+                if (message.embeds[0].title === 'Account Request') {
+                    await message.reply(`Account has been registered successfully!'`);
+                }
             }
         });
         
