@@ -26,12 +26,7 @@ export default new Command({
         let gameId: string;
 
         await guild.channels.create(`poker-room-${PokerTable.getTables().length() + 1}`, {
-            type: 'GUILD_TEXT',
-            permissionOverwrites: [
-                {
-                  id: guild.roles.everyone.id,
-                  deny: ['VIEW_CHANNEL'],
-                }]
+            type: 'GUILD_TEXT'
         }).then(async (channel) => {
             gameId = channel.id;
             await channel.setParent('1191808100609568808');
