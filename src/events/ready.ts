@@ -57,14 +57,14 @@ export default new Event("ready", async (client) => {
 
     const channel = await client.channels.fetch('1192486674916184175');
 
-    console.log("Requesting verification...");
-    (channel as TextChannel).messages.cache.forEach(async (message) => {
-        message.embeds.forEach(async (embed) => {
-            if (embed.title === "Account Request") {
-                await message.reply({ content: `<@${message.author.id}> was registered successfully.` });
+    (channel as TextChannel).messages.fetch({ limit: 10 }).then(async (messages) => {
+        messages.forEach(async (message) => {
+            if (message.embeds[0].title === 'Account Request') {
+                await message.reply(`<@${message.author.id}>'s account has been registered successfully!'`);
             }
-        })
-    })
+        });
+        
+    });
 
     await initializeUsers();
     await initializeDatabase(client);
