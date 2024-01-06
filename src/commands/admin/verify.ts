@@ -107,7 +107,7 @@ export default new Command({
         userExists.verified = true;
         userExists.sync();
 
-        const verifyChannel = await interaction.guild?.channels.fetch('1191654861238972446');
+        const verifyChannel = await interaction.guild?.channels.fetch('1192486674916184175');
         if (verifyChannel && verifyChannel instanceof TextChannel) {
             await verifyChannel.send({ content: `<@${userExists.userId}>'s account has been registered successfully.` });
         }
