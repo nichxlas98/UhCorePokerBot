@@ -43,6 +43,7 @@ export default new Command({
         const request = {
             username: interaction.options.getString("username"),
             character: interaction.options.getString("character"),
+            master: interaction.options.getString("master"),
             age: interaction.options.getInteger("age"),
             profile: interaction.options.getString("profile") ? interaction.options.getString("profile") : "N/A",
         };
@@ -74,7 +75,7 @@ export default new Command({
 
         const embed = new MessageEmbed()
             .setTitle('Account Activation Request')
-            .setDescription(`**Username**: ${request.username}\n**Character**: ${request.character}\n**Age**: ${request.age}\n**Profile URL**: ${request.profile}`)
+            .setDescription(`**Master**: ${request.master}\n**Username**: ${request.username}\n**Character**: ${request.character}\n**Age**: ${request.age}\n**Profile URL**: ${request.profile}`)
             .setColor(0x7289DA)
             .addFields(
                 {
