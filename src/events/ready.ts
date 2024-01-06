@@ -55,19 +55,6 @@ export default new Event("ready", async (client) => {
     const logger = LogManager.getInstance();
     logger.log(`Bot is online under the name: ${client.user.username}, ID: ${client.user.id}`);
 
-    const channel = await client.channels.fetch('1192486674916184175');
-
-    (channel as TextChannel).messages.fetch({ limit: 10 }).then(async (messages) => {
-        messages.forEach(async (message) => {
-            if (message.embeds) {
-                if (message.embeds[0].title === 'Account Request') {
-                    await message.reply(`Account has been registered successfully!'`);
-                }
-            }
-        });
-        
-    });
-
     await initializeUsers();
     await initializeDatabase(client);
 });
