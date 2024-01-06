@@ -19,19 +19,23 @@ export default new Command({
         const channel = await interaction.client.channels.fetch(ticket);
 
         if (!channel) {
-            return interaction.followUp({ content: "Ticket not found.", ephemeral: true });
+            return interaction.followUp({ content: "Ticket not found. (ERR-1)", ephemeral: true });
         }
 
         if (!(channel instanceof TextChannel)) {
-            return interaction.followUp({ content: "Ticket not found.", ephemeral: true });
+            return interaction.followUp({ content: "Ticket not found. (ERR-2)", ephemeral: true });
         }
 
         if (!(channel.parent.name !== "Support Tickets")) {
-            return interaction.followUp({ content: "Ticket not found.", ephemeral: true });
+            return interaction.followUp({ content: "Ticket not found. (ERR-3)", ephemeral: true });
         }
 
         if (!(channel.name.startsWith("ticket-"))) {
-            return interaction.followUp({ content: "Ticket not found.", ephemeral: true });
+            return interaction.followUp({ content: "Ticket not found. (ERR-4)", ephemeral: true });
+        }
+
+        if (channel.parent.children.size <= 1) {
+            await channel.parent.delete();
         }
 
         await channel.delete();
