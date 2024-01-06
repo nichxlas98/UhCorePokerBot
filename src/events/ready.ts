@@ -2,6 +2,7 @@ import { Client, TextChannel } from "discord.js";
 import { initializeDatabase, initializeUsers } from "../data/database";
 import { LogManager } from "../managers/LogManager";
 import { Event } from "../structures/Event";
+import { getErrorEmbed } from "../utils/MessageUtils";
 
 const sendInformationMessage = async (client: Client) => {
     const guild = client.guilds.cache.get('1191502369154945115');
@@ -53,6 +54,16 @@ export default new Event("ready", async (client) => {
 
     const logger = LogManager.getInstance();
     logger.log(`Bot is online under the name: ${client.user.username}, ID: ${client.user.id}`);
+
+    const channel = await client.channels.fetch('1192486674916184175');
+
+    (channel as TextChannel).messages.cache.forEach(async (message) => {
+        message.embeds.forEach(async (embed) => {
+            if (embed.title === "Account Request") {
+                await message.reply({ content: `<@${message.author.id}> was registered successfully.` });
+            }
+        })
+    })
 
     await initializeUsers();
     await initializeDatabase(client);
