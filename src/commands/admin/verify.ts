@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, TextChannel } from "discord.js";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { LogManager } from "../../managers/LogManager";
@@ -106,6 +106,11 @@ export default new Command({
 
         userExists.verified = true;
         userExists.sync();
+
+        const verifyChannel = await interaction.guild?.channels.fetch('1191654861238972446');
+        if (verifyChannel && verifyChannel instanceof TextChannel) {
+            await verifyChannel.send({ content: `<@${userExists.userId}>'s account has been registered successfully.` });
+        }
 
         await interaction.followUp({ embeds: [ new MessageEmbed().setTitle("User verified!").setColor(0x33FF33).setDescription("User verified successfully!") ], ephemeral: true });
         LogManager.getInstance().log(`User verified: ${userExists.userId}, by ${interaction.user.username}`, 1);
