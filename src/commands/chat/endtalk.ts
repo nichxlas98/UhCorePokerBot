@@ -26,7 +26,7 @@ export default new Command({
             return interaction.followUp({ content: "Ticket not found. (ERR-2)", ephemeral: true });
         }
 
-        if (!(channel.parent.name !== "Support Tickets")) {
+        if (channel.parent.name !== "Support Tickets") {
             return interaction.followUp({ content: "Ticket not found. (ERR-3)", ephemeral: true });
         }
 
