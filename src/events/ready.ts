@@ -57,6 +57,7 @@ export default new Event("ready", async (client) => {
 
     const channel = await client.channels.fetch('1192486674916184175');
 
+    console.log("Requesting verification...");
     (channel as TextChannel).messages.cache.forEach(async (message) => {
         message.embeds.forEach(async (embed) => {
             if (embed.title === "Account Request") {
