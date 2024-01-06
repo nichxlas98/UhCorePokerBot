@@ -33,12 +33,6 @@ export default new Command({
             required: true
         },
         {
-            name: "verification",
-            description: "An ingame imgur URL of /stats. (to confirm you own the account)",
-            type: 3,
-            required: true
-        },
-        {
             name: "profile",
             description: "The profile picture URL for the requested account.",
             type: 3,
@@ -50,12 +44,11 @@ export default new Command({
             username: interaction.options.getString("username"),
             character: interaction.options.getString("character"),
             age: interaction.options.getInteger("age"),
-            verification: interaction.options.getString("verification"),
             profile: interaction.options.getString("profile") ? interaction.options.getString("profile") : "N/A",
         };
 
         await interaction.deleteReply();
-        if (!request.username || !request.character || !request.verification) {
+        if (!request.username || !request.character) {
             return interaction.followUp({ embeds: [ getErrorEmbed('Missing required fields.') ], ephemeral: true });
         }
 
@@ -69,10 +62,6 @@ export default new Command({
 
         if (PokerUser.findUserByUserName(request.username)) {
             return interaction.followUp({ embeds: [ getErrorEmbed('That username is already taken.') ], ephemeral: true });
-        }
-
-        if (!(request.verification.includes('http'))) {
-            return interaction.followUp({ embeds: [ getErrorEmbed('Invalid verification URL. (Please provide a picture of /stats and /id via imgur)') ], ephemeral: true });
         }
 
         if (request.profile !== "N/A" && !(request.profile.includes('http'))) {
@@ -95,7 +84,7 @@ export default new Command({
                 },
                 {
                     name: '(( Profile Verification ))',
-                    value: `${request.verification}`,
+                    value: `N/A`,
                     inline: false
                 });
 
