@@ -47,7 +47,6 @@ export default new Command({
     ],
     run: async ({ interaction }) => {
         const request = {
-            master: interaction.options.getString("master"),
             username: interaction.options.getString("username"),
             character: interaction.options.getString("character"),
             age: interaction.options.getInteger("age"),
@@ -56,7 +55,7 @@ export default new Command({
         };
 
         await interaction.deleteReply();
-        if (!request.master || !request.username || !request.character || !request.verification) {
+        if (!request.username || !request.character || !request.verification) {
             return interaction.followUp({ embeds: [ getErrorEmbed('Missing required fields.') ], ephemeral: true });
         }
 
@@ -90,11 +89,6 @@ export default new Command({
             .setColor(0x7289DA)
             .addFields(
                 {
-                    name: '(( Master Account ))',
-                    value: `${request.master}`,
-                    inline: true
-                },
-                {
                     name: '(( Requested By ))',
                     value: `<@${interaction.user.id}>`,
                     inline: true
@@ -123,6 +117,6 @@ export default new Command({
 
         await (channel as TextBasedChannel).send({ embeds: [ embed ] });
         await interaction.followUp({ content: 'Request sent successfully! Your request should be approved in a brief moment, or you may be asked to correct a specific field of information.\n**If you have any questions, feel free to contact <@315272242529304587> directly for more information.\n\n**', embeds: [ embed ], ephemeral: true });
-        LogManager.getInstance().log(`Profile verification requested: ${request.username} (${request.master}), by ${interaction.user.username} (${interaction.user.id})`, 1);
+        LogManager.getInstance().log(`Profile verification requested: ${request.username} (${request.character}), by ${interaction.user.username} (${interaction.user.id})`, 1);
     },
 });
