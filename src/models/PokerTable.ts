@@ -398,7 +398,7 @@ class PokerTable {
                         return;
                     }
     
-                    user.balance += winner.cash - (winner.cash * 0.5);
+                    user.balance += winner.cash;
                     user.debt = winner.cash * 0.5;
                     user.sync();
 
