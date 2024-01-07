@@ -12,6 +12,12 @@ export default new Command({
             description: "The user to clear the debt of.",
             type: 6,
             required: true
+        },
+        {
+            name: "debt",
+            description: "Set a user's debt.",
+            type: 4,
+            required: false
         }
     ],
     run: async ({ interaction }) => {
@@ -29,7 +35,9 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed(`${user.tag} has never played poker.`) ], ephemeral: true });
         }
 
-        foundUser.debt = 0;
+        const debt = interaction.options.getNumber("debt");
+
+        foundUser.debt = debt || 0;
         foundUser.sync();
 
         await interaction.followUp({ embeds: [ getErrorEmbed(`Cleared ${user.tag}'s debt.`) ], ephemeral: true });
