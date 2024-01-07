@@ -250,7 +250,7 @@ export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number)
             const losses = winOrLoss ? existingUser.losses : existingUser.losses + 1;
 
             let totalWinnings = existingUser.winnings;
-            if (winnings) {
+            if (winnings && winnings > 0) {
                 totalWinnings += winnings;
             }
 
