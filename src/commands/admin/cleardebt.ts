@@ -21,6 +21,7 @@ export default new Command({
         }
     ],
     run: async ({ interaction }) => {
+        await interaction.deleteReply();
         if (!(interaction.member.permissions.has('ADMINISTRATOR'))) {
             return interaction.followUp({ embeds: [ getErrorEmbed("You do not have permission to use this command.") ], ephemeral: true });
         }
