@@ -548,19 +548,19 @@ class PokerTable {
 
     leave(username: string) {
         this.joined.remove(username);
-        const player = this.players.find(player => player.username === username);
         this.channel.permissionOverwrites.edit(PokerUser.findUserByUserName(username)!.userId, {
             VIEW_CHANNEL: false
         });
-
-        const pokerUser = PokerUser.findUserByUserName(username)!;
-        pokerUser.balance += player!.cash;
-        player.playerState = PlayerState.QUIT;
-
-        this.postChat(`**[GAME]** ${username} left the table.`);
-        this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
-
-        saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
+        
+        this.postChat(`**[GAME]** ${username} left the table.`);    
+        const player = this.players.find(player => player.username === username);
+        if (player) {
+            const pokerUser = PokerUser.findUserByUserName(username)!;
+            pokerUser.balance += player!.cash;
+            player.playerState = PlayerState.QUIT;
+            saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
+            this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
+        }
     }
 
     chat(username: string, message: string) {
