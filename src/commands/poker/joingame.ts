@@ -64,7 +64,7 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('You cannot afford to join with that much cash.') ], ephemeral: true });
         }
 
-        user.balance -= cash - (cash * 0.10);
+        user.balance -= cash + (cash * 0.10);
         user.debt += cash * 0.10;
         user.sync();
 
