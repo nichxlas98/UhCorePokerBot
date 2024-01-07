@@ -147,11 +147,13 @@ class PokerTable {
                 description: message
             }
         
-            if (this.eventMessage) {
-                await this.eventMessage.edit({ embeds: [embed] });
-            } else {
-                this.eventMessage = await this.channel.send({ embeds: [embed] });
-            }
+            try {
+                if (this.eventMessage) {
+                    await this.eventMessage.edit({ embeds: [embed] });
+                } else {
+                    this.eventMessage = await this.channel.send({ embeds: [embed] });
+                }
+            } catch (ignored) {} // Error caused by the channel being deleted.
             return;
         }
 
@@ -162,7 +164,9 @@ class PokerTable {
                 color: 0x0096FF,
                 description: 'No message provided.'
             }
-            await this.eventMessage.edit({ embeds: [embed] });
+            try {
+                await this.eventMessage.edit({ embeds: [embed] });
+            } catch (ignored) {}
             
 
             // await this.eventMessage.delete();
