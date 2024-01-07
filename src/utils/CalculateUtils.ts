@@ -17,6 +17,10 @@ export const getGameWinners = (players: List<PokerPlayer>, communityCards: Cards
     // Sort players based on hand quality in descending order
     const sortedPlayers = players.asArray().sort((a, b) => handQuality.get(b.username)! - handQuality.get(a.username)!);
 
+    if (sortedPlayers.length < 1) {
+        return [];
+    }
+
     // Find the highest hand quality
     const highestQuality = handQuality.get(sortedPlayers[0].username);
 
