@@ -256,7 +256,7 @@ class PokerTable {
             }
         });
 
-        if (hasAllPlayersFolded === this.players.length() - 1) {
+        if (hasAllPlayersFolded === this.players.length() - 1 || hasAllPlayersFolded === this.players.length()) {
             this.gamePhase = GamePhase.END;
             this.handleNewRound();
             return;
@@ -349,13 +349,13 @@ class PokerTable {
 
             const winners = getGameWinners(playersAlive, this.communityCards);
             playersAlive.forEach(player => {
+                let winner = false;
                 if (winners.includes(player)) {
                     player.cash += this.winningPool / winners.length;
-
-                    saveStats(PokerUser.findUserByUserName(player.username)!.userId, true);
+                    winner = true;
                 }
 
-                saveStats(PokerUser.findUserByUserName(player.username)!.userId, false);
+                saveStats(PokerUser.findUserByUserName(player.username)!.userId, winner, winner ? this.winningPool / winners.length : 0);
             });
 
             this.postChat(`**[GAME]** Winner(s): **${winners.map(winner => winner.username).join(', ')}**`);
@@ -554,13 +554,14 @@ class PokerTable {
         
         this.postChat(`**[GAME]** ${username} left the game room.`);    
         const player = this.players.find(player => player.username === username);
+        const pokerUser = PokerUser.findUserByUserName(username)!;
         if (player) {
-            const pokerUser = PokerUser.findUserByUserName(username)!;
             pokerUser.balance += player!.cash;
             player.playerState = PlayerState.QUIT;
-            saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
-        }
-        
+        } else pokerUser.balance += this.joinCash.get(username)!;
+
+        pokerUser.sync();
+        saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
         this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
     }
 
