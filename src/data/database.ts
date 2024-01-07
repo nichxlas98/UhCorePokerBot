@@ -13,6 +13,13 @@ interface Game {
     createdAt: Date;
 }
 
+interface PlayerStats {
+    userId: string,
+    wins: number,
+    losses: number,
+    winnings: number
+}
+
 const db = new Database(path.resolve('src/data/db.sqlite'));
 
 export const initializeUsers = async (): Promise<void> => {
@@ -200,6 +207,30 @@ export const saveGame = (table: PokerTable) => {
         else LogManager.getInstance().log(`Game created successfully: ${table.gameId}`, 1);
     });
 };
+
+export const getStats = (userId: string): PlayerStats | null => {
+    const query = 'SELECT * FROM stats WHERE user_id = ?';
+
+    db.get(query, [userId], (err, existingUser: any) => {
+        if (err) {
+            LogManager.getInstance().log(`Error checking if user exists: ${err}`, 3);
+            return;
+        }
+
+        if (existingUser) {
+            const playerStats: PlayerStats = {
+                userId: existingUser.user_id,
+                wins: existingUser.wins,
+                losses: existingUser.losses,
+                winnings: existingUser.winnings
+            };
+            
+            return playerStats;
+        }
+    });
+
+    return null;
+}
 
 export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number) => {
     const checkIfExistsQuery = "SELECT * FROM stats WHERE user_id = ?";

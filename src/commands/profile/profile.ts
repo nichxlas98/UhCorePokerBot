@@ -3,6 +3,7 @@ import { Command } from "../../structures/Command";
 import PokerUser from "../../models/PokerUser";
 import { LogManager } from "../../managers/LogManager";
 import { getErrorEmbed } from "../../utils/MessageUtils";
+import { getStats } from "../../data/database";
 
 export default new Command({
     name: "profile",
@@ -44,13 +45,17 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('User not found.') ], ephemeral: true });
         }
 
+        const playerStats = getStats(foundUser.userId);
+        const winLossRatio = playerStats.wins / (playerStats.losses + playerStats.wins) * 100;
+
         const member = interaction.guild.members.cache.get(foundUser.userId);
         let embed: MessageEmbed;
+
         if (interaction.member.permissions.has('ADMINISTRATOR') && admin) {
             embed = new MessageEmbed()
                 .setTitle('Game Profile')
                 .setAuthor({ name: `${foundUser.userName} (( ${member.user.username} ))`, iconURL: member.user.displayAvatarURL() })
-                .setDescription(`\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n\n**Balance**: $${foundUser.balance}\n**Debt**: $${foundUser.debt}\n\n**Verified**: ${foundUser.verified ? 'Yes' : 'No'}\n**Created**: ${foundUser.createdAtFormatted}`)
+                .setDescription(`\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n\n**Winnings**: $${playerStats.winnings}\n**Balance**: $${foundUser.balance}\n**Debt**: $${foundUser.debt}\n\n**W/L Ratio**: ${winLossRatio.toFixed(2)}%\n**Wins**: ${playerStats.wins}\n**Losses**: ${playerStats.losses}\n**Total Games**: ${playerStats.wins + playerStats.losses}\n\n**Verified**: ${foundUser.verified ? 'Yes' : 'No'}\n**Created**: ${foundUser.createdAtFormatted}`)
                 .setColor(0x7289DA)
                 .addFields(
                     { 
@@ -73,7 +78,7 @@ export default new Command({
                 embed = new MessageEmbed()
                     .setTitle('Profile')
                     .setAuthor({ name: `${foundUser.userName} (( Private ))`, iconURL: foundUser.profileUrl })
-                    .setDescription(`\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n\n**Balance**: $${foundUser.balance}\n**Verified**: ${foundUser.verified ? 'Yes' : 'No'}\n**Created**: ${foundUser.createdAtFormatted}`)
+                    .setDescription(`\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n\n**Balance**: $${foundUser.balance}\n**W/L Ratio**: ${winLossRatio.toFixed(2)}%\n**Wins**: ${playerStats.wins}\n**Losses**: ${playerStats.losses}\n**Winnings**: $${playerStats.winnings}\n\n**Verified**: ${foundUser.verified ? 'Yes' : 'No'}\n**Created**: ${foundUser.createdAtFormatted}`)
                     .setColor(0x7289DA);
             } else {
                 embed = new MessageEmbed()
