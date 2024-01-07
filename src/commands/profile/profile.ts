@@ -45,7 +45,17 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('User not found.') ], ephemeral: true });
         }
 
-        const playerStats = getStats(foundUser.userId);
+        let playerStats = getStats(foundUser.userId);
+
+        if (!playerStats) {
+            playerStats = {
+                userId: foundUser.userId,
+                wins: 0,
+                losses: 0,
+                winnings: 0
+            }
+        }
+
         const winLossRatio = playerStats.wins / (playerStats.losses + playerStats.wins) * 100;
 
         const member = interaction.guild.members.cache.get(foundUser.userId);
