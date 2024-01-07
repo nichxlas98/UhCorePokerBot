@@ -133,6 +133,25 @@ export const syncUsers = () => {
     });
 };
 
+export const getGameList = (): string[] => {
+    const query = 'SELECT game_id, created_at FROM games';
+
+    const gameList: string[] = [];
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            LogManager.getInstance().log('Error getting game list.', 3);
+            return;
+        }
+
+        rows.forEach((row: any) => {
+            gameList.push(row.game_id + ' - ' + row.created_at);
+        });
+    });
+
+    return gameList;
+}
+
 export const loadGame = (gameId: string): Game | null => {
     const query = 'SELECT * FROM games WHERE game_id = ?';
 
