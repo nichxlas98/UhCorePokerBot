@@ -562,7 +562,7 @@ class PokerTable {
 
         pokerUser.sync();
         saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
-        this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
+        if (this.gameState === GameState.STARTING || this.gameState === GameState.RUNNING) this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
     }
 
     chat(username: string, message: string) {
