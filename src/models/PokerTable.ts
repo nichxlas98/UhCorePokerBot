@@ -248,7 +248,7 @@ class PokerTable {
         }
     }
 
-    public checkIfAllPlayersFoldedOrQuit(player: PokerPlayer) {
+    public checkIfAllPlayersFoldedOrQuit(player?: PokerPlayer) {
         let hasAllPlayersFolded = 0;
         this.players.forEach(player => {
             if (player.playerState === PlayerState.FOLDED || player.playerState === PlayerState.QUIT) {
@@ -262,7 +262,7 @@ class PokerTable {
             return;
         }
 
-        this.nextPlayerTurn(player);
+        if (player) this.nextPlayerTurn(player);
     }
 
     handleNewRound() {
@@ -559,8 +559,9 @@ class PokerTable {
             pokerUser.balance += player!.cash;
             player.playerState = PlayerState.QUIT;
             saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
-            this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
         }
+        
+        this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
     }
 
     chat(username: string, message: string) {
