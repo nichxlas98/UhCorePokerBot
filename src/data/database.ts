@@ -241,32 +241,36 @@ export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number)
             return;
         }
 
-        if (existingUser) {
-            // User exists, update
-            const updateQuery = `UPDATE stats SET 
-                wins = ?, losses = ?, winnings = ? WHERE user_id = ?`;
+        if (!existingUser) {
+            // User does not exist, insert
+            const insertQuery = 'INSERT INTO stats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?)';
 
-            const wins = winOrLoss ? existingUser.wins + 1 : existingUser.wins;
-            const losses = winOrLoss ? existingUser.losses : existingUser.losses + 1;
-
-            let totalWinnings = existingUser.winnings;
-            if (winnings && winnings > 0) {
-                totalWinnings += winnings;
-            }
-
-            db.run(updateQuery, [
-                wins, losses, totalWinnings,
-            ]);
+            db.run(insertQuery, [
+                userId, winOrLoss ? 1 : 0, winOrLoss ? 0 : 1, winnings
+            ], (err) => {
+                if (err) LogManager.getInstance().log(`Error inserting stats: ${err}`, 3);
+                else LogManager.getInstance().log(`Stats created successfully: ${userId}`, 1);
+            });
             return;
         }
 
-        // User does not exist, insert
-        const insertQuery = 'INSERT INTO stats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?)';
-
-        db.run(insertQuery, [
-            userId, winOrLoss ? 1 : 0, winOrLoss ? 0 : 1, winnings
-        ]);
-
-        LogManager.getInstance().log(`Stats updated successfully: ${userId}`, 1);
+        // User exists, update
+        const updateQuery = `UPDATE stats SET 
+        wins = ?, losses = ?, winnings = ? WHERE user_id = ?`;
+    
+        const wins = winOrLoss ? existingUser.wins + 1 : existingUser.wins;
+        const losses = winOrLoss ? existingUser.losses : existingUser.losses + 1;
+    
+        let totalWinnings = existingUser.winnings;
+        if (winnings && winnings > 0) {
+            totalWinnings += winnings;
+        }
+    
+        db.run(updateQuery, [
+            wins, losses, totalWinnings,
+        ], (err) => {
+            if (err) LogManager.getInstance().log(`Error updating stats: ${err}`, 3);
+            else LogManager.getInstance().log(`Stats updated successfully: ${userId}`, 1);
+        });
     });  
 };
