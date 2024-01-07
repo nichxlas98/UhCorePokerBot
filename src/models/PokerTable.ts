@@ -59,7 +59,7 @@ class PokerTable {
     }
 
     private async initializeTable() {
-        const waitTime = 180;
+        const waitTime = 60 * 3;
         await this.sendCommunityCards([Cards.DEFAULT_CARD, Cards.DEFAULT_CARD, Cards.DEFAULT_CARD, Cards.DEFAULT_CARD, Cards.DEFAULT_CARD]);
         await this.postChat('**[GAME]** Community cards updated.');
         await this.postChat('**[GAME]** Waiting for players...');
@@ -265,15 +265,15 @@ class PokerTable {
 
         if (hasAllPlayersFolded === this.players.length() - 1 || hasAllPlayersFolded === this.players.length()) {
             this.gamePhase = GamePhase.END;
-            this.handleNewRound();
+            this.handleNewRound(this.gamePhase);
             return;
         }
 
         if (player) this.nextPlayerTurn(player);
     }
 
-    handleNewRound() {
-        if (this.turn === 0 && this.lastTurn > 0) {
+    handleNewRound(phase?: GamePhase) {
+        if (this.turn === 0 && this.lastTurn > 0 && !phase) {
             switch (this.gamePhase) {
                 case GamePhase.BLIND:
                     this.gamePhase = GamePhase.PRE_FLOP;
@@ -354,7 +354,7 @@ class PokerTable {
             const playersAlive = new List<PokerPlayer>();
             playersAlive.addAll(this.players.asArray().filter(player => player.playerState !== PlayerState.QUIT && player.playerState !== PlayerState.BUSTED));
 
-            const winners = getGameWinners(playersAlive, this.communityCards);
+            const winners = getGameWinners(playersAlive, this.communityCards).filter(winner => winner.playerState !== PlayerState.FOLDED);
             playersAlive.forEach(player => {
                 let winner = false;
                 if (winners.includes(player)) {
