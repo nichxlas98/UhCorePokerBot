@@ -27,10 +27,29 @@ export const getGameWinners = (players: List<PokerPlayer>, communityCards: Cards
     // Filter out the winners with the highest hand quality
     const winners = sortedPlayers.filter(player => handQuality.get(player.username) === highestQuality);
 
-    return winners;
-}
+    // If there's more than one winner, return the user(s) with the highest cards total
+    if (winners.length > 1) {
+        const winnersCardTotals = winners.map(player => calculateCardTotal(List.from(player.hand)));
+        const maxCardTotal = Math.max(...winnersCardTotals);
 
-const getHandQuality = (handType): number => {
+        // Filter winners with the highest card total
+        return winners.filter((player, index) => winnersCardTotals[index] === maxCardTotal);
+    }
+
+    return winners;
+};
+
+const calculateCardTotal = (cards: List<Cards>): number => {
+    // Convert face cards to numerical values for comparison
+    const cardValues: Record<string, number> = {
+        '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'jack': 11, 'queen': 12, 'king': 13, 'ace': 14
+    };
+
+    // Sum the numerical values of all cards in the hand
+    return cards.reduce((total, card) => total + cardValues[getRank(card)], 0);
+};
+
+const getHandQuality = (handType: HandTypes): number => {
     switch(handType) {
         case HandTypes.ROYAL_FLUSH:
             return 100;

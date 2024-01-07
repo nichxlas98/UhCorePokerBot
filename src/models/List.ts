@@ -5,6 +5,12 @@ class List<T> {
       this.items = [];
     }
 
+    static from<T>(items: T[]): List<T> {
+      const list = new List<T>();
+      list.addAll(items);
+      return list;
+    }
+
     map(callback: (item: T) => T): T[] {
       return this.items.map(callback);
     }
@@ -89,6 +95,10 @@ class List<T> {
 
     asArray(): T[] {
       return this.items
+    }
+
+    reduce<U>(callback: (accumulator: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U {
+      return this.items.reduce(callback, initialValue);
     }
 }
 
