@@ -8,7 +8,7 @@ import PokerPlayer from "./PokerPlayer";
 import exp from "constants";
 import { getGameWinners, getHandType } from "../utils/CalculateUtils";
 import ConfigurationManager from "../managers/ConfigManager";
-import { saveGame } from "../data/database";
+import { saveGame, saveStats } from "../data/database";
 
 const tables = new List<PokerTable>();
 
@@ -127,13 +127,12 @@ class PokerTable {
         const embed = new MessageEmbed()
             .setTitle(`Game Room — (${this.gameId})`)
             .setColor(0x0096FF)
-            .setDescription(description)
             .setImage(this.communityCardsUrl);
     
         if (this.gameMessage) {
-            await this.gameMessage.edit({ embeds: [embed] });
+            await this.gameMessage.edit({ content: description, embeds: [embed] });
         } else {
-            this.gameMessage = await this.channel.send({ embeds: [embed] });
+            this.gameMessage = await this.channel.send({ content: description, embeds: [embed] });
         }
     }
 
@@ -349,8 +348,14 @@ class PokerTable {
             playersAlive.addAll(this.players.asArray().filter(player => player.playerState !== PlayerState.QUIT && player.playerState !== PlayerState.BUSTED));
 
             const winners = getGameWinners(playersAlive, this.communityCards);
-            winners.forEach(winner => {
-                winner.cash += this.winningPool / winners.length;
+            playersAlive.forEach(player => {
+                if (winners.includes(player)) {
+                    player.cash += this.winningPool / winners.length;
+
+                    saveStats(PokerUser.findUserByUserName(player.username)!.userId, true);
+                }
+
+                saveStats(PokerUser.findUserByUserName(player.username)!.userId, false);
             });
 
             this.postChat(`**[GAME]** Winner(s): **${winners.map(winner => winner.username).join(', ')}**`);
@@ -396,6 +401,8 @@ class PokerTable {
                     user.balance += winner.cash - (winner.cash * 0.5);
                     user.debt = winner.cash * 0.5;
                     user.sync();
+
+                    saveStats(PokerUser.findUserByUserName(winner.username).userId, true, winner.cash - (winner.cash * 0.5));
                 });
     
                 playersAlive.forEach(player => {
@@ -404,9 +411,11 @@ class PokerTable {
                         if (!user) {
                             return;
                         }
-    
+                        
                         user.balance += player.cash;
                         user.sync();
+
+                        saveStats(PokerUser.findUserByUserName(player.username).userId, false, 0);
                     }
                 });
     
@@ -550,6 +559,8 @@ class PokerTable {
 
         this.postChat(`**[GAME]** ${username} left the table.`);
         this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
+
+        saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
     }
 
     chat(username: string, message: string) {
