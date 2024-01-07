@@ -9,6 +9,7 @@ import exp from "constants";
 import { getGameWinners, getHandType } from "../utils/CalculateUtils";
 import ConfigurationManager from "../managers/ConfigManager";
 import { saveGame, saveStats } from "../data/database";
+import { LogManager } from "../managers/LogManager";
 
 const tables = new List<PokerTable>();
 
@@ -129,11 +130,13 @@ class PokerTable {
             .setColor(0x0096FF)
             .setImage(this.communityCardsUrl);
     
-        if (this.gameMessage) {
-            await this.gameMessage.edit({ content: description, embeds: [embed] });
-        } else {
-            this.gameMessage = await this.channel.send({ content: description, embeds: [embed] });
-        }
+        try {
+            if (this.gameMessage) {
+                await this.gameMessage.edit({ content: description, embeds: [embed] });
+            } else {
+                this.gameMessage = await this.channel.send({ content: description, embeds: [embed] });
+            }
+        } catch (ignored) {}
     }
 
     async sendEvent(message?: string) {
