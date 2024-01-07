@@ -133,9 +133,8 @@ export const saveGame = (table: PokerTable) => {
     const currentTimestamp = Date.now();
     const currentDate = new Date(currentTimestamp);
 
-    // Extracting individual components
     const day = String(currentDate.getUTCDate()).padStart(2, '0');
-    const month = String(currentDate.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(currentDate.getUTCMonth() + 1).padStart(2, '0');
     const year = currentDate.getUTCFullYear();
     const hours = String(currentDate.getUTCHours()).padStart(2, '0');
 
@@ -150,4 +149,43 @@ export const saveGame = (table: PokerTable) => {
         if (err) LogManager.getInstance().log(`Error inserting or updating game: ${err}`, 3);
         else LogManager.getInstance().log(`Game created successfully: ${table.gameId}`, 1);
     });
+};
+
+export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number) => {
+    const checkIfExistsQuery = "SELECT * FROM stats WHERE user_id = ?";
+
+    db.get(checkIfExistsQuery, [userId], (err, existingUser: any) => {
+        if (err) {
+            LogManager.getInstance().log(`Error checking if user exists: ${err}`, 3);
+            return;
+        }
+
+        if (existingUser) {
+            // User exists, update
+            const updateQuery = `UPDATE stats SET 
+                wins = ?, losses = ?, winnings = ? WHERE user_id = ?`;
+
+            const wins = winOrLoss ? existingUser.wins + 1 : existingUser.wins;
+            const losses = winOrLoss ? existingUser.losses : existingUser.losses + 1;
+
+            let totalWinnings = existingUser.winnings;
+            if (winnings) {
+                totalWinnings += winnings;
+            }
+
+            db.run(updateQuery, [
+                wins, losses, totalWinnings,
+            ]);
+            return;
+        }
+
+        // User does not exist, insert
+        const insertQuery = 'INSERT INTO stats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?, ?)';
+
+        db.run(insertQuery, [
+            userId, winOrLoss ? 1 : 0, winOrLoss ? 0 : 1, winnings
+        ]);
+
+        LogManager.getInstance().log(`Stats updated successfully: ${userId}`, 1);
+    });  
 };
