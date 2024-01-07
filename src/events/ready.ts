@@ -43,7 +43,6 @@ const sendHelpMessage = async (client: Client) => {
 };
 
 export default new Event("ready", async (client) => {
-    client.user.setAvatar('https://i.imgur.com/nX8IbmD.jpg');
     client.user.setPresence({ 
         status: 'online',
         activities: [{ 
