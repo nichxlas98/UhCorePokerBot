@@ -6,6 +6,13 @@ import PokerUser from '../models/PokerUser';
 import { LogManager } from '../managers/LogManager';
 import PokerTable from '../models/PokerTable';
 
+interface Game {
+    gameId: number;
+    players: string;
+    chatLogs: string,
+    createdAt: Date;
+}
+
 const db = new Database(path.resolve('src/data/db.sqlite'));
 
 export const initializeUsers = async (): Promise<void> => {
@@ -125,6 +132,30 @@ export const syncUsers = () => {
         });
     });
 };
+
+export const loadGame = (gameId: string): Game | null => {
+    const query = 'SELECT * FROM games WHERE game_id = ?';
+
+    db.get(query, [gameId], (err, existingGame: any) => {
+        if (err) {
+            LogManager.getInstance().log('Error checking if game exists.', 3);
+            return;
+        }
+
+        if (existingGame) {
+            const game: Game = {
+                gameId: existingGame.game_id,
+                players: existingGame.players,
+                chatLogs: existingGame.chat_logs,
+                createdAt: existingGame.created_at
+            };
+            
+            return game;
+        }
+    });
+
+    return null;
+}
 
 
 export const saveGame = (table: PokerTable) => {

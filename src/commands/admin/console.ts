@@ -1,7 +1,8 @@
 import { Command } from "../../structures/Command";
 import { LogManager } from "../../managers/LogManager";
-import { exec } from 'child_process';
 import fs from 'fs';
+import { loadGame } from "../../data/database";
+import path from "path";
 
 export default new Command({
     name: "console",
@@ -29,6 +30,19 @@ export default new Command({
             });
             return;
         }
+
+        if (run && run.includes("game-")) {
+            const gameId = run.split("game-")[1];
+            const game = loadGame(gameId);
+
+            if (!game) {
+                return interaction.followUp({ content: "Game not found.", ephemeral: true });
+            }
+            
+            const filePath = path.resolve(`./src/data/games/${game.chatLogs}.json`);
+            return interaction.channel.send({ content: 'Game: ' + game.gameId + '\n' + game.players + '\n', files: [filePath] });
+        }
+        
         const logs = logger.getLogs().length > 3800 ? logger.getLogs().slice(0, 3800) + "..." : logger.getLogs();
         await interaction.followUp({
             embeds: [
