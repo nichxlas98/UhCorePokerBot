@@ -30,7 +30,7 @@ export default new Command({
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setTitle('Your Hand')
-            .setDescription(`**Your cash left**: $${pokerPlayer.cash}`)
+            .setDescription(`**Your stack**: $${pokerPlayer.cash}`)
             .setImage(handUrl);
 
 

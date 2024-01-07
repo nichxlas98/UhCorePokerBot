@@ -445,7 +445,7 @@ class PokerTable {
         .setTitle(`TURN — ${player.username}`)
         .setColor(0x808080)
         .setDescription(`It's ${player.username}'s turn!\n${expectedAction}`)
-        .addFields({ name: 'Round', value: `The ${this.gamePhase}`, inline: true }, { name: 'Cash Left', value: `$${player.cash}`, inline: true }, { name: 'Time Left', value: `They'll auto-fold <t:${timestamp}:R>`, inline: true }, { name: 'Players', value: `${this.players.length()}/${config.maxPlayers}`, inline: true }, { name: 'Pot', value: `$${this.winningPool}`, inline: true });
+        .addFields({ name: 'Round', value: `The ${this.gamePhase}`, inline: true }, { name: 'Stack', value: `$${player.cash}`, inline: true }, { name: 'Time Left', value: `They'll auto-fold <t:${timestamp}:R>`, inline: true }, { name: 'Players', value: `${this.players.length()}/${config.maxPlayers}`, inline: true }, { name: 'Pot', value: `$${this.winningPool}`, inline: true });
 
         if (!this.turnMessage) {
             this.turnMessage = await this.channel.send({ embeds: [embed] });
