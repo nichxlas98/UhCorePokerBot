@@ -25,7 +25,8 @@ export default new Event("messageCreate", async (message) => {
         return;
     }
 
-    const content = message.content;
+    const specialCharacters = ['*', '`', '#', '~', '_', '|', '\n'];
+    const content = message.content.replaceAll(new RegExp(`[${specialCharacters.join('')}]`, 'g'), '');
     if (foundTable.channel.id === message.channel.id) {
         await message.delete();
         foundTable.chat(pokerUser.userName, content);

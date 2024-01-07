@@ -34,8 +34,8 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('Your message is too long. (100 characters max)') ], ephemeral: true });
         }
 
-        const specialCharacters = ['*', '`', '#', '~', '_'];
-        const cleanedMessage = message.replace(new RegExp(`[${specialCharacters.join('')}]`, 'g'), '');
+        const specialCharacters = ['*', '`', '#', '~', '_', '|', '\n'];
+        const cleanedMessage = message.replaceAll(new RegExp(`[${specialCharacters.join('')}]`, 'g'), '');
     
         foundTable.chat(pokerUser.userName, cleanedMessage);
         return;
