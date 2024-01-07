@@ -261,7 +261,7 @@ export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number)
         }
 
         // User does not exist, insert
-        const insertQuery = 'INSERT INTO stats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?, ?)';
+        const insertQuery = 'INSERT INTO stats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?)';
 
         db.run(insertQuery, [
             userId, winOrLoss ? 1 : 0, winOrLoss ? 0 : 1, winnings
