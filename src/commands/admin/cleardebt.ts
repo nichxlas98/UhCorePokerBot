@@ -40,6 +40,6 @@ export default new Command({
         foundUser.debt = debt || 0;
         foundUser.sync();
 
-        await interaction.followUp({ embeds: [ getErrorEmbed(`Cleared ${user.tag}'s debt.`) ], ephemeral: true });
+        await interaction.followUp({ embeds: [ getErrorEmbed(`Cleared ${user.tag}'s debt.`).setTitle("Debt Cleared") ], ephemeral: true });
     },  
 });
