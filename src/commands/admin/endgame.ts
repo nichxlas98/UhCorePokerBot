@@ -28,7 +28,7 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('No poker game with that ID was found.') ], ephemeral: true });
         }
 
-        PokerTable.deleteTable(foundTable);
-        return interaction.followUp({ embeds: [ getErrorEmbed('Poker game forcefully-ended.') ], ephemeral: true }); 
+        await interaction.followUp({ embeds: [ getErrorEmbed('Poker game forcefully-ended.') ], ephemeral: true }); 
+        await PokerTable.deleteTable(foundTable);
     },  
 });

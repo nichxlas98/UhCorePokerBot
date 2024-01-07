@@ -78,10 +78,10 @@ class PokerTable {
         return tables;
     }
 
-    static deleteTable(table: PokerTable) {
+    static async deleteTable(table: PokerTable) {
         saveGame(table);
-        table.channel.delete();
         tables.remove(tables.find(t => t.gameId === table.gameId));
+        await table.channel.delete();
     }
 
     async sendCommunityCards(cards: Cards[]) {
