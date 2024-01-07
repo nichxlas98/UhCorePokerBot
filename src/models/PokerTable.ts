@@ -543,7 +543,7 @@ class PokerTable {
             VIEW_CHANNEL: true
         });
 
-        this.postChat(`**[GAME]** ${username} joined the table.`);
+        this.postChat(`**[GAME]** ${username} joined the game room.`);
     }
 
     leave(username: string) {
@@ -552,7 +552,7 @@ class PokerTable {
             VIEW_CHANNEL: false
         });
         
-        this.postChat(`**[GAME]** ${username} left the table.`);    
+        this.postChat(`**[GAME]** ${username} left the game room.`);    
         const player = this.players.find(player => player.username === username);
         if (player) {
             const pokerUser = PokerUser.findUserByUserName(username)!;
