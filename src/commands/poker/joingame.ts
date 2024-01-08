@@ -6,7 +6,6 @@ import { getErrorEmbed } from "../../utils/MessageUtils";
 import ConfigurationManager from "../../managers/ConfigManager";
 
 export default new Command({
-
     name: "joingame",
     description: "Join a poker game.",
     options: [

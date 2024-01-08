@@ -70,12 +70,12 @@ export default new Command({
     run: async ({ interaction }) => {
         const user = interaction.options.getString("user");
         const admin = interaction.options.getBoolean("admin");
-        const foundUser = findUser(user, interaction, admin);
+        const foundUser = findUser(user, interaction);
         await viewProfile(interaction, foundUser, admin);
     },
 });
 
-const findUser = (user, interaction, admin) => {
+const findUser = (user: string, interaction: ExtendedInteraction) => {
     if (!user) {
         return PokerUser.findUserByUserId(interaction.user.id);
     }

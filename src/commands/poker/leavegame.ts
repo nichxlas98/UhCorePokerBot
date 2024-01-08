@@ -4,7 +4,6 @@ import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
 export default new Command({
-
     name: "leavegame",
     description: "Leave a poker game.",
     run: async ({ interaction }) => {

@@ -55,12 +55,12 @@ export default new Command({
             return;
         }
 
-        raise(interaction, foundTable, foundPlayer, pokerPlayer, config, amount);
+        raiseCurrentBet(interaction, foundTable, foundPlayer, pokerPlayer, config, amount);
         return interaction.followUp({ embeds: [ getErrorEmbed("You have raised your bet successfully.").setTitle(`Current Bet: $${pokerPlayer.currentBet}`) ], ephemeral: true });
     },
 });
 
-const bet = (foundTable: PokerTable, pokerPlayer: PokerPlayer, pokerUser: PokerUser, amount: number, action: PlayerAction) => {
+const handleBet = (foundTable: PokerTable, pokerPlayer: PokerPlayer, pokerUser: PokerUser, amount: number, action: PlayerAction) => {
     pokerPlayer.cash -= amount;
     pokerPlayer.currentBet = amount;
     pokerPlayer.lastAction = action;
@@ -83,10 +83,10 @@ const placeStartingBet = (interaction: ExtendedInteraction, foundTable: PokerTab
         return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum starting bet is $${config.minStart}.`) ], ephemeral: true });
     }
 
-    bet(foundTable, pokerPlayer, foundPlayer, amount, PlayerAction.START);
+    handleBet(foundTable, pokerPlayer, foundPlayer, amount, PlayerAction.START);
 };
 
-const raise = (interaction: ExtendedInteraction, foundTable: PokerTable, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {
+const raiseCurrentBet = (interaction: ExtendedInteraction, foundTable: PokerTable, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {
     if (amount > config.maxRaise) {
         return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum raise amount is $${config.maxRaise}.`) ], ephemeral: true });
     }
@@ -95,5 +95,5 @@ const raise = (interaction: ExtendedInteraction, foundTable: PokerTable, foundPl
         return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum raise amount is $${config.minRaise}.`) ], ephemeral: true });
     }
 
-    bet(foundTable, pokerPlayer, foundPlayer, amount, PlayerAction.RAISE);
+    handleBet(foundTable, pokerPlayer, foundPlayer, amount, PlayerAction.RAISE);
 };
