@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import path from 'path';
 
-interface Config {
+export interface Config {
   gameCreation: boolean;
   maxStart: number;
   maxRaise: number;

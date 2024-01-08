@@ -4,7 +4,9 @@ import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { GamePhase, GameState, PlayerAction } from "../../enums/States";
 import { getErrorEmbed } from "../../utils/MessageUtils";
-import ConfigurationManager from "../../managers/ConfigManager";
+import ConfigurationManager, { Config } from "../../managers/ConfigManager";
+import PokerPlayer from "../../models/PokerPlayer";
+import { ExtendedInteraction } from "../../typings/Command";
 
 
 export default new Command({
@@ -49,45 +51,49 @@ export default new Command({
         const config = new ConfigurationManager().loadConfig();
 
         if (foundTable.gamePhase === GamePhase.BLIND && foundTable.winningPool === 0) {
-
-            if (amount > config.maxStart) {
-                return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum starting bet is $${config.maxStart}.`) ], ephemeral: true });
-            }
-            
-            if (amount < config.minStart) {
-                return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum starting bet is $${config.minStart}.`) ], ephemeral: true });
-            }
-
-            pokerPlayer.cash -= amount;
-            pokerPlayer.currentBet = amount;
-            pokerPlayer.lastAction = PlayerAction.START;
-            pokerPlayer.actions++;
-            
-            foundTable.lastBet = amount;
-            foundTable.winningPool += amount;
-
-            foundTable.postChat(`**[GAME]** **${foundPlayer.userName}** placed a starting bet of $${amount}.`);
-            foundTable.nextPlayerTurn(pokerPlayer);
+            placeStartingBet(interaction, foundTable, foundPlayer, pokerPlayer, config, amount);
             return;
         }
 
-        if (amount > config.maxRaise) {
-            return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum raise amount is $${config.maxRaise}.`) ], ephemeral: true });
-        }
-
-        if (amount < config.minRaise) {
-            return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum raise amount is $${config.minRaise}.`) ], ephemeral: true });
-        }
-
-        pokerPlayer.cash -= amount;
-        pokerPlayer.currentBet = amount;
-        pokerPlayer.lastAction = PlayerAction.RAISE;
-        pokerPlayer.actions++;
-        
-        foundTable.lastBet = amount;
-        foundTable.winningPool += amount;
-
-        foundTable.postChat(`**[GAME]** **${foundPlayer.userName}** raised to $${amount}.`);
-        foundTable.nextPlayerTurn(pokerPlayer);
+        raise(interaction, foundTable, foundPlayer, pokerPlayer, config, amount);
+        return interaction.followUp({ embeds: [ getErrorEmbed("You have raised your bet successfully.").setTitle(`Current Bet: $${pokerPlayer.currentBet}`) ], ephemeral: true });
     },
 });
+
+const bet = (foundTable: PokerTable, pokerPlayer: PokerPlayer, pokerUser: PokerUser, amount: number, action: PlayerAction) => {
+    pokerPlayer.cash -= amount;
+    pokerPlayer.currentBet = amount;
+    pokerPlayer.lastAction = action;
+    pokerPlayer.actions++;
+    
+    foundTable.lastBet = amount;
+    foundTable.winningPool += amount;
+
+    const raiseOrStart = action === PlayerAction.RAISE ? "raised to" : "placed a starting bet of";
+    foundTable.postChat(`**[GAME]** **${pokerUser.userName}** ${raiseOrStart} $${amount}.`);
+    foundTable.nextPlayerTurn(pokerPlayer);
+}
+
+const placeStartingBet = (interaction: ExtendedInteraction, foundTable: PokerTable, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {    
+    if (amount > config.maxStart) {
+        return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum starting bet is $${config.maxStart}.`) ], ephemeral: true });
+    }
+    
+    if (amount < config.minStart) {
+        return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum starting bet is $${config.minStart}.`) ], ephemeral: true });
+    }
+
+    bet(foundTable, pokerPlayer, foundPlayer, amount, PlayerAction.START);
+};
+
+const raise = (interaction: ExtendedInteraction, foundTable: PokerTable, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {
+    if (amount > config.maxRaise) {
+        return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum raise amount is $${config.maxRaise}.`) ], ephemeral: true });
+    }
+
+    if (amount < config.minRaise) {
+        return interaction.followUp({ embeds: [ getErrorEmbed(`The minimum raise amount is $${config.minRaise}.`) ], ephemeral: true });
+    }
+
+    bet(foundTable, pokerPlayer, foundPlayer, amount, PlayerAction.RAISE);
+};
