@@ -4,8 +4,9 @@ import PokerUser from "../../models/PokerUser";
 import { LogManager } from "../../managers/LogManager";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 import { getStats } from "../../data/database";
+import { ExtendedInteraction } from "../../typings/Command";
 
-const viewProfile = async (interaction, foundUser, admin) => {
+const viewProfile = async (interaction: ExtendedInteraction, foundUser: PokerUser, admin: boolean) => {
     await interaction.deleteReply();
     if (!foundUser) {
         return interaction.followUp({ embeds: [ getErrorEmbed('User not found.') ], ephemeral: true });
@@ -20,7 +21,7 @@ const viewProfile = async (interaction, foundUser, admin) => {
     LogManager.getInstance().log(`Profile viewed: ${foundUser.userName} (${foundUser.userId}), by ${PokerUser.findUserByUserId(interaction.user.id).userName} (${interaction.user.username})`, 1);
 };
 
-const createProfileEmbed = (foundUser, playerStats, interaction, admin) => {
+const createProfileEmbed = (foundUser: PokerUser, playerStats, interaction: ExtendedInteraction, admin: boolean) => {
     const member = interaction.guild.members.cache.get(foundUser.userId);
     const title = admin ? 'Game Profile' : 'Profile';
     const authorName = admin ? `${foundUser.userName} (( ${member.user.username} ))` : `${foundUser.userName} (( Private ))`;

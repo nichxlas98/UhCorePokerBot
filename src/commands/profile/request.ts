@@ -31,12 +31,6 @@ export default new Command({
             description: "The age of the account.",
             type: 4,
             required: true
-        },
-        {
-            name: "profile",
-            description: "The profile picture URL for the requested account.",
-            type: 3,
-            required: false
         }
     ],
     run: async ({ interaction }) => {
@@ -44,8 +38,7 @@ export default new Command({
             username: interaction.options.getString("username"),
             character: interaction.options.getString("character"),
             master: interaction.options.getString("master"),
-            age: interaction.options.getInteger("age"),
-            profile: interaction.options.getString("profile") ? interaction.options.getString("profile") : "N/A",
+            age: interaction.options.getInteger("age")
         };
 
         await interaction.deleteReply();
@@ -65,29 +58,11 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('That username is already taken.') ], ephemeral: true });
         }
 
-        if (request.profile !== "N/A" && !(request.profile.includes('http'))) {
-            return interaction.followUp({ embeds: [ getErrorEmbed('Invalid profile URL. (Please provide a proper profile picture for the account)') ], ephemeral: true });
-        }
-
         if (request.character.includes('_')) {
             return interaction.followUp({ embeds: [ getErrorEmbed("Character name shouldn't contain underscores. Use spaces instead (Example: 'John Doe').") ], ephemeral: true });
         }
 
-        const embed = new MessageEmbed()
-            .setTitle('Account Activation Request')
-            .setDescription(`**Master**: ${request.master}\n**Username**: ${request.username}\n**Character**: ${request.character}\n**Age**: ${request.age}\n**Profile URL**: ${request.profile}`)
-            .setColor(0x7289DA)
-            .addFields(
-                {
-                    name: '(( Requested By ))',
-                    value: `<@${interaction.user.id}>`,
-                    inline: true
-                },
-                {
-                    name: '(( Profile Verification ))',
-                    value: `N/A`,
-                    inline: false
-                });
+        const embed = getReqeustEmbed(interaction.user.id, request.master, request.username, request.character, request.age);
 
         const channel = await interaction.guild.channels.fetch('1191657224825753681'); // #pending-approval channel
         if (!channel) {
@@ -110,3 +85,21 @@ export default new Command({
         LogManager.getInstance().log(`Profile verification requested: ${request.username} (${request.character}), by ${interaction.user.username} (${interaction.user.id})`, 1);
     },
 });
+
+const getReqeustEmbed = (userId: string, masterAccount: string, username: string, character: string, age: number): MessageEmbed => {
+    return new MessageEmbed()
+    .setTitle('Account Activation Request')
+    .setDescription(`**Master**: ${masterAccount}\n**Username**: ${username}\n**Character**: ${character}\n**Age**: ${age}\n**Profile URL**: N/A`)
+    .setColor(0x7289DA)
+    .addFields(
+        {
+            name: '(( Requested By ))',
+            value: `<@${userId}>`,
+            inline: true
+        },
+        {
+            name: '(( Profile Verification ))',
+            value: `N/A`,
+            inline: false
+        });
+};
