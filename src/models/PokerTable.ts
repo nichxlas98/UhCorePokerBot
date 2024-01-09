@@ -454,22 +454,25 @@ class PokerTable {
         }
 
         this.autoFoldTimeout = setTimeout(() => {
-            this.autoFold(player);
+            this.autoFold(player.username);
         }, 120 * 1000);
     }
 
-    autoFold(player: PokerPlayer) {
+    autoFold(username: string) {
         if (this.gamePhase === GamePhase.END) {
             return;
         }
 
-        const updatedPlayer = this.players.find(p => p.username === player.username);
+        const updatedPlayer = this.players.find(p => p.username === username);
 
         if (updatedPlayer.isPlayersTurn && updatedPlayer.actions < updatedPlayer.turns) {
-            player.lastAction = PlayerAction.FOLD;
-            player.playerState = PlayerState.FOLDED;
-            this.postChat(`**[GAME]** **${player.username}** folded.`);
-            this.checkIfAllPlayersFoldedOrQuit(player);
+            updatedPlayer.lastAction = PlayerAction.FOLD;
+            updatedPlayer.playerState = PlayerState.FOLDED;
+            this.players.addOrReplaceAtIndex(this.players.findIndex(p => p.username === username), updatedPlayer);
+            
+            this.postChat(`**[GAME]** **${updatedPlayer.username}** folded.`);
+            this.checkIfAllPlayersFoldedOrQuit(updatedPlayer);
+
         }
     }
 
