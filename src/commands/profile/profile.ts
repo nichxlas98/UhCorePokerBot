@@ -44,7 +44,7 @@ const createProfileEmbed = (foundUser: PokerUser, playerStats, interaction: Exte
 };
 
 const createProfileDescription = (foundUser, playerStats, admin) => {
-    const description = `\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n`;
+    const description = `\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n\n`;
 
     if (admin) {
         return description +

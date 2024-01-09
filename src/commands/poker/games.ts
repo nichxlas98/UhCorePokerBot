@@ -9,16 +9,15 @@ export default new Command({
     run: async ({ interaction }) => {
         await interaction.deleteReply();
 
-        const config = new ConfigurationManager().loadConfig();
-        let rooms: string = '*';
-        for (const table of PokerTable.getTables().asArray()) {
-            rooms += `*Room ID**: ${table.gameId}\n**Game State**: ${table.gameState}\n**Players**: ${table.joined.length()}/${config.maxPlayers}` + '\n*';
-        }
-
-        if (rooms === '*') {
+        const tables = PokerTable.getTables().asArray();
+        if (tables.length === 0) {
             return interaction.followUp({ embeds: [ new MessageEmbed().setTitle('Poker Rooms').setDescription('No poker rooms found.') ], ephemeral: true });
         }
 
+        const config = new ConfigurationManager().loadConfig();
+        let rooms: string = '';
+        tables.forEach(table => rooms += `**Room ID**: ${table.gameId}\n**Game State**: ${table.gameState}\n**Players**: ${table.joined.length()}/${config.maxPlayers}` + '\n');
+        
         return interaction.followUp({ embeds: [ new MessageEmbed().setTitle('Poker Rooms').setDescription(rooms) ], ephemeral: true });
     }
 })
