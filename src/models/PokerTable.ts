@@ -469,7 +469,7 @@ class PokerTable {
             updatedPlayer.lastAction = PlayerAction.FOLD;
             updatedPlayer.playerState = PlayerState.FOLDED;
             this.players.addOrReplaceAtIndex(this.players.findIndex(p => p.username === username), updatedPlayer);
-            
+
             this.postChat(`**[GAME]** **${updatedPlayer.username}** folded.`);
             this.checkIfAllPlayersFoldedOrQuit(updatedPlayer);
 
@@ -572,7 +572,9 @@ class PokerTable {
 
         pokerUser.sync();
         saveStats(PokerUser.findUserByUserName(username)!.userId, false, 0);
-        if (this.gameState === GameState.STARTING || this.gameState === GameState.RUNNING) this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
+        if (this.gameState === GameState.STARTING || this.gameState === GameState.RUNNING) {
+            if (this.gamePhase !== GamePhase.END) this.checkIfAllPlayersFoldedOrQuit(this.players.find(player => player.username === username));
+        }
     }
 
     chat(username: string, message: string) {
