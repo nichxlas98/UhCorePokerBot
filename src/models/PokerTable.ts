@@ -376,7 +376,7 @@ class PokerTable {
             for (const player of playersAlive.asArray()) {
                 const allCards = new List<Cards>();
                 allCards.addAll(player.hand.concat(this.communityCards));
-                revealMessage += `**${player.username}** had a **${getHandType(allCards).replace('_', ' ').toUpperCase()}** - ${player.hand.toString().replace('[', '').replace(']', '')}\n`;
+                revealMessage += `**${player.username}** had a **${getHandType(allCards).replace('_', ' ').toUpperCase()}** - ${player.hand.toString().replace('[', '').replace(']', '').replaceAll('.png', '').replaceAll(',', ', ')}\n`;
             }
 
             this.sendEvent(revealMessage);
