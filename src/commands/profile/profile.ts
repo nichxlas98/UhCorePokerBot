@@ -26,7 +26,7 @@ const createProfileEmbed = (foundUser: PokerUser, playerStats, interaction: Exte
     const title = admin ? 'Game Profile' : 'Profile';
     const authorName = admin ? `${foundUser.userName} (( ${member.user.username} ))` : `${foundUser.userName} (( Private ))`;
 
-    const profileUrl = foundUser.profileUrl.includes('https://') ? foundUser.profileUrl : `https://i.imgur.com/KkZTAyz.png`;
+    const profileUrl = foundUser.profileUrl && foundUser.profileUrl.includes('https://') ? foundUser.profileUrl : `https://i.imgur.com/KkZTAyz.png`;
 
     const embed = new MessageEmbed()
         .setTitle(title)
