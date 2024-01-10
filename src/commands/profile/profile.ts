@@ -26,9 +26,11 @@ const createProfileEmbed = (foundUser: PokerUser, playerStats, interaction: Exte
     const title = admin ? 'Game Profile' : 'Profile';
     const authorName = admin ? `${foundUser.userName} (( ${member.user.username} ))` : `${foundUser.userName} (( Private ))`;
 
+    const profileUrl = foundUser.profileUrl.includes('https://') ? foundUser.profileUrl : `https://i.imgur.com/KkZTAyz.png`;
+
     const embed = new MessageEmbed()
         .setTitle(title)
-        .setAuthor({ name: authorName, iconURL: admin ? member.user.displayAvatarURL() : foundUser.profileUrl })
+        .setAuthor({ name: authorName, iconURL: admin ? member.user.displayAvatarURL() : profileUrl })
         .setDescription(createProfileDescription(foundUser, playerStats, admin))
         .setColor(0x7289DA);
 
