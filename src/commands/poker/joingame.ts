@@ -68,6 +68,6 @@ export default new Command({
         user.sync();
 
         foundTable.join(user.userName, cash);
-        return interaction.followUp({ embeds: [ getErrorEmbed(`Joined poker game with ID **${gameid}**.`).setColor(0x00ff00) ], ephemeral: true });
+        return interaction.followUp({ embeds: [ getErrorEmbed(`Joined poker game with ID **${gameid}**.`).setColor(0x00ff00).setTitle(`Cash: $${cash}`) ], ephemeral: true });
     },
 });
