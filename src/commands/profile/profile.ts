@@ -13,7 +13,7 @@ const viewProfile = async (interaction: ExtendedInteraction, foundUser: PokerUse
     }
 
     const playerStats = await getStats(foundUser.userId) || { userId: foundUser.userId, wins: 0, losses: 0, winnings: 0 };
-    const winLossRatio = playerStats.wins / (playerStats.losses + playerStats.wins) * 100;
+    //const winLossRatio = playerStats.wins / (playerStats.losses + playerStats.wins) * 100;
 
     const embed = createProfileEmbed(foundUser, playerStats, interaction, admin);
 
@@ -21,7 +21,7 @@ const viewProfile = async (interaction: ExtendedInteraction, foundUser: PokerUse
     LogManager.getInstance().log(`Profile viewed: ${foundUser.userName} (${foundUser.userId}), by ${PokerUser.findUserByUserId(interaction.user.id).userName} (${interaction.user.username})`, 1);
 };
 
-const createProfileEmbed = (foundUser: PokerUser, playerStats, interaction: ExtendedInteraction, admin: boolean) => {
+const createProfileEmbed = (foundUser: PokerUser, playerStats: any, interaction: ExtendedInteraction, admin: boolean) => {
     const member = interaction.guild.members.cache.get(foundUser.userId);
     const title = admin ? 'Game Profile' : 'Profile';
     const authorName = admin ? `${foundUser.userName} (( ${member.user.username} ))` : `${foundUser.userName} (( Private ))`;
@@ -45,7 +45,7 @@ const createProfileEmbed = (foundUser: PokerUser, playerStats, interaction: Exte
     return embed;
 };
 
-const createProfileDescription = (foundUser, playerStats, admin) => {
+const createProfileDescription = (foundUser: PokerUser, playerStats: any, admin: boolean) => {
     const description = `\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n\n`;
 
     if (admin) {

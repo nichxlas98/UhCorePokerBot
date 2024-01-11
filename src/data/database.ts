@@ -160,30 +160,37 @@ export const getGameList = (): Promise<string[]> => {
     });
 }
 
-export const loadGame = (gameId: string): Promise<Game | null> => {
+export const loadGame = async (gameId: string): Promise<Game | null> => {
     const query = 'SELECT * FROM games WHERE game_id = ?';
 
-    const promise: Promise<Game | null> = new Promise((resolve, reject) => {
-        db.get(query, [gameId], (err, existingGame: any) => {
-            if (err) {
-                LogManager.getInstance().log('Error checking if game exists.', 3);
-                reject(err);
-            } else if (existingGame) {
-                const game: Game = {
-                    gameId: existingGame.game_id,
-                    players: existingGame.players,
-                    chatLogs: existingGame.chat_logs,
-                    createdAt: existingGame.created_at
-                };
-                resolve(game);
-            } else {
-                resolve(null);
-            }
+    try {
+        const existingGame: any = await new Promise((resolve, reject) => {
+            db.get(query, [gameId], (err, result) => {
+                if (err) {
+                    LogManager.getInstance().log('Error checking if game exists.', 3);
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
         });
-    });
 
-    return promise
-}
+        if (existingGame) {
+            const game: Game = {
+                gameId: existingGame.game_id,
+                players: existingGame.players,
+                chatLogs: existingGame.chat_logs,
+                createdAt: existingGame.created_at
+            };
+            return game;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error('Error loading game:', error);
+        return null;
+    }
+};
 
 
 export const saveGame = (table: PokerTable) => {
@@ -234,56 +241,120 @@ export const getStats = (userId: string): Promise<PlayerStats | null> => {
     });
 }
 
-export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number): Promise<void> => {
+export const saveStats = async (userId: string, winOrLoss: boolean, winnings?: number): Promise<void> => {
     const checkIfExistsQuery = "SELECT * FROM gamestats WHERE user_id = ?";
+    
+    try {
+        const existingUser: any = await new Promise((resolve, reject) => {
+            db.get(checkIfExistsQuery, [userId], (err, user) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(user);
+                }
+            });
+        });
+
+        if (!existingUser) {
+            // User does not exist, insert
+            const insertQuery = 'INSERT INTO gamestats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?)';
+            await new Promise<void>((resolve, reject) => {
+                db.run(insertQuery, [userId, winOrLoss ? 1 : 0, winOrLoss ? 0 : 1, winnings], (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        LogManager.getInstance().log(`Stats created successfully: ${userId}`, 1);
+                        resolve();
+                    }
+                });
+            });
+        } else {
+            // User exists, update
+            const updateQuery = 'UPDATE gamestats SET wins = ?, losses = ?, winnings = ? WHERE user_id = ?';
+
+            const wins = winOrLoss ? existingUser.wins + 1 : existingUser.wins;
+            const losses = winOrLoss ? existingUser.losses : existingUser.losses + 1;
+            const totalWinnings = (existingUser.winnings || 0) + (winnings || 0);
+
+            await new Promise<void>((resolve, reject) => {
+                db.run(updateQuery, [wins, losses, totalWinnings, userId], (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        LogManager.getInstance().log(`Stats updated successfully: ${userId}`, 1);
+                        resolve();
+                    }
+                });
+            });
+        }
+
+        // Resolve the Promise if successful
+        return Promise.resolve();
+    } catch (error) {
+        // Log the error and reject the Promise
+        LogManager.getInstance().log(`Error saving stats: ${error}`, 3);
+        return Promise.reject(error);
+    }
+};
+
+export const saveCards = async (cards: string[], cardUrl: string): Promise<void> => {
+    const checkIfExistsQuery = "SELECT * FROM cards WHERE cards_string = ?";
+
+    const cardsAsString = cards.toString();
+
+    try {
+        const existingCards: any = await new Promise((resolve, reject) => {
+            db.get(checkIfExistsQuery, [cardsAsString], (err, cards) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                resolve(cards);
+            });
+        });
+
+        if (!existingCards) {
+            // Cards do not exist, insert
+            const insertQuery = 'INSERT INTO cards (cards_string, card_url) VALUES (?, ?)';
+            await new Promise<void>((resolve, reject) => {
+                db.run(insertQuery, [cardsAsString, cardUrl], (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        LogManager.getInstance().log(`Cards created successfully: ${cardsAsString}`, 1);
+                        resolve();
+                    }
+                });
+            });
+        }
+
+        // Resolve the Promise if successful
+        Promise.resolve();
+    } catch (error) {
+        // Log the error and reject the Promise
+        LogManager.getInstance().log(`Error saving cards: ${error}`, 3);
+        Promise.reject(error);
+    }
+}
+
+export const getCardsUrl = async (cards: string[]): Promise<string> | null => {
+    const cardsAsString = cards.toString();
 
     return new Promise((resolve, reject) => {
-        db.get(checkIfExistsQuery, [userId], (err, existingUser: any) => {
+        const query = 'SELECT card_url FROM cards WHERE cards_string = ?';
+
+        db.get(query, [cardsAsString], (err, row: any) => {
             if (err) {
-                LogManager.getInstance().log(`Error checking if user exists: ${err}`, 3);
                 reject(err);
-            } else {
-                if (!existingUser) {
-                    // User does not exist, insert
-                    const insertQuery = 'INSERT INTO gamestats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?)';
-
-                    db.run(insertQuery, [
-                        userId, winOrLoss ? 1 : 0, winOrLoss ? 0 : 1, winnings
-                    ], (err) => {
-                        if (err) {
-                            LogManager.getInstance().log(`Error inserting stats: ${err}`, 3);
-                            reject(err);
-                        } else {
-                            LogManager.getInstance().log(`Stats created successfully: ${userId}`, 1);
-                            resolve();
-                        }
-                    });
-                } else {
-                    // User exists, update
-                    const updateQuery = `UPDATE gamestats SET 
-                    wins = ?, losses = ?, winnings = ? WHERE user_id = ?`;
-
-                    const wins = winOrLoss ? existingUser.wins + 1 : existingUser.wins;
-                    const losses = winOrLoss ? existingUser.losses : existingUser.losses + 1;
-
-                    let totalWinnings = existingUser.winnings || 0;
-                    if (winnings && winnings > 0) {
-                        totalWinnings += winnings;
-                    }
-
-                    db.run(updateQuery, [
-                        wins, losses, totalWinnings, userId
-                    ], (err) => {
-                        if (err) {
-                            LogManager.getInstance().log(`Error updating stats: ${err}`, 3);
-                            reject(err);
-                        } else {
-                            LogManager.getInstance().log(`Stats updated successfully: ${userId}`, 1);
-                            resolve();
-                        }
-                    });
-                }
             }
+
+            if (row) {
+                resolve(row.card_url);
+                return;
+            }
+            
+            resolve(null);
         });
-    });
+    })
 }

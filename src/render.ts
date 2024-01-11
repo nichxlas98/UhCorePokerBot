@@ -2,6 +2,7 @@ import { createCanvas, loadImage, CanvasRenderingContext2D, Image } from 'canvas
 import * as fs from 'fs';
 import axios from 'axios';
 import FormData from 'form-data';
+import { getCardsUrl, saveCards } from './data/database';
 
 const imgbbApiKey = 'c74b895dad6cddc72f521f1131092f6a';
 
@@ -38,6 +39,12 @@ async function uploadToImgbb(imagePath: string): Promise<string> {
 
 // Function to splice 5 images horizontally
 export async function getUrlFromImages(images: string[], outputPath: string): Promise<string> {
+  const foundCards = await getCardsUrl(images);
+
+  if (foundCards) {
+    return foundCards;
+  }
+
   const canvasWidth = 500;  // number of images
   const canvasHeight = 150; // 1 row
 
@@ -63,15 +70,6 @@ export async function getUrlFromImages(images: string[], outputPath: string): Pr
     })
     .catch((error) => console.error('Error:', error));
 
+    await saveCards(images, image);
     return image;
 }
-
-/*
-// Example usage
-const inputImages = ['image1.png', 'image2.png', 'image3.png', 'image4.png', 'image5.png'];
-const outputImagePath = 'output.png';
-
-spliceImages(inputImages, outputImagePath)
-  .then(() => console.log('Images spliced successfully'))
-  .catch((error) => console.error('Error splicing images:', error));
-  */

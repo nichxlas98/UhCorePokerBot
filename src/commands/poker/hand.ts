@@ -27,10 +27,11 @@ export default new Command({
         }
 
         const handUrl = await getUrlFromImages(pokerPlayer.hand, 'output.png');
+        const handString = pokerPlayer.hand.toString();
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setTitle('Your Hand')
-            .setDescription(`**Your stack**: $${pokerPlayer.cash}`)
+            .setDescription(`**Your stack**: $${pokerPlayer.cash}\n**Your hand**: ${handString.replaceAll(',', ', ').replaceAll('.png', '')}`)
             .setImage(handUrl);
 
 
