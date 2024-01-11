@@ -32,8 +32,13 @@ export default new Command({
         }
 
         if (run === "games") {
-            const games = getGameList().toString().replace("[", "").replace("]", "").replaceAll(",", "\n");
-            fs.writeFile('all-games.txt', games, async (err) => {
+            const games = await getGameList();
+            if (!games) {
+                return interaction.followUp({ content: "No games found.", ephemeral: true });
+            }
+
+            
+            fs.writeFile('all-games.txt', games.toString().replace("[", "").replace("]", "").replaceAll(",", "\n"), async (err) => {
                 if (err) throw err;
                 await interaction.channel.send({ content: "All Games.", files: ["./all-games.txt"] });
             });
@@ -42,7 +47,7 @@ export default new Command({
 
         if (run && run.includes("game-")) {
             const gameId = run.split("game-")[1];
-            const game = loadGame(gameId);
+            const game = await loadGame(gameId);
 
             if (!game) {
                 return interaction.followUp({ content: "Game not found.", ephemeral: true });

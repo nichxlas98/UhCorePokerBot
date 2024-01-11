@@ -12,7 +12,7 @@ const viewProfile = async (interaction: ExtendedInteraction, foundUser: PokerUse
         return interaction.followUp({ embeds: [ getErrorEmbed('User not found.') ], ephemeral: true });
     }
 
-    const playerStats = getStats(foundUser.userId) || { userId: foundUser.userId, wins: 0, losses: 0, winnings: 0 };
+    const playerStats = await getStats(foundUser.userId) || { userId: foundUser.userId, wins: 0, losses: 0, winnings: 0 };
     const winLossRatio = playerStats.wins / (playerStats.losses + playerStats.wins) * 100;
 
     const embed = createProfileEmbed(foundUser, playerStats, interaction, admin);
