@@ -39,6 +39,7 @@ export default new Command({
             
             fs.writeFile('all-games.txt', games.toString().replace("[", "").replace("]", "").replaceAll(",", "\n"), async (err) => {
                 if (err) throw err;
+                await interaction.followUp({ content: "Successfully returned game history.", ephemeral: true });
                 await interaction.channel.send({ content: "All Games.", files: ["./all-games.txt"] });
             });
             return;
@@ -60,6 +61,7 @@ export default new Command({
                 const txtFilePath = path.resolve(`./src/data/games/${game.chatLogs}.txt`);
                 fs.writeFileSync(txtFilePath, modifiedContent, 'utf8');
         
+                await interaction.followUp({ content: "Game Logs successfully processed.", ephemeral: true });
                 return interaction.channel.send({ content: `Game: ${game.gameId}\n${game.players}\n`, files: [txtFilePath] });
         
             } catch (error) {
