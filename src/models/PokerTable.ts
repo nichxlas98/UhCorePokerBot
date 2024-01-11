@@ -468,11 +468,12 @@ class PokerTable {
         if (updatedPlayer.isPlayersTurn && updatedPlayer.actions < updatedPlayer.turns) {
             updatedPlayer.lastAction = PlayerAction.FOLD;
             updatedPlayer.playerState = PlayerState.FOLDED;
+
             this.players.addOrReplaceAtIndex(this.players.findIndex(p => p.username === username), updatedPlayer);
+            const newPlayer = this.players.find(p => p.username === username);
 
-            this.postChat(`**[GAME]** **${updatedPlayer.username}** folded.`);
-            this.checkIfAllPlayersFoldedOrQuit(updatedPlayer);
-
+            this.postChat(`**[GAME]** **${newPlayer.username}** folded.`);
+            this.checkIfAllPlayersFoldedOrQuit(newPlayer);
         }
     }
 
