@@ -159,26 +159,26 @@ export const getGameList = (): Promise<string[]> => {
 export const loadGame = (gameId: string): Promise<Game | null> => {
     const query = 'SELECT * FROM games WHERE game_id = ?';
 
-    return new Promise((resolve, reject) => {
+    const promise: Promise<Game | null> = new Promise((resolve, reject) => {
         db.get(query, [gameId], (err, existingGame: any) => {
             if (err) {
                 LogManager.getInstance().log('Error checking if game exists.', 3);
                 reject(err);
+            } else if (existingGame) {
+                const game: Game = {
+                    gameId: existingGame.game_id,
+                    players: existingGame.players,
+                    chatLogs: existingGame.chat_logs,
+                    createdAt: existingGame.created_at
+                };
+                resolve(game);
             } else {
-                if (existingGame) {
-                    const game: Game = {
-                        gameId: existingGame.game_id,
-                        players: existingGame.players,
-                        chatLogs: existingGame.chat_logs,
-                        createdAt: existingGame.created_at
-                    };
-                    resolve(game);
-                } else {
-                    resolve(null);
-                }
+                resolve(null);
             }
         });
     });
+
+    return promise
 }
 
 
@@ -214,18 +214,17 @@ export const getStats = (userId: string): Promise<PlayerStats | null> => {
             if (err) {
                 LogManager.getInstance().log(`Error checking if user exists: ${err}`, 3);
                 reject(err);
+            } else if (existingUser) {
+                const playerStats: PlayerStats = {
+                    userId: existingUser.user_id,
+                    wins: existingUser.wins,
+                    losses: existingUser.losses,
+                    winnings: existingUser.winnings
+                };
+                
+                resolve(playerStats);
             } else {
-                if (existingUser) {
-                    const playerStats: PlayerStats = {
-                        userId: existingUser.user_id,
-                        wins: existingUser.wins,
-                        losses: existingUser.losses,
-                        winnings: existingUser.winnings
-                    }
-                    resolve(playerStats);
-                } else {
-                    resolve(null);
-                }
+                resolve(null);
             }
         });
     });
