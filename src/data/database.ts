@@ -151,7 +151,7 @@ export const getGameList = (): Promise<string[]> => {
                 reject(err);
             } else {
                 const gameList = rows.map((row: any) => {
-                    const formattedDate = formatTimestamp(row.created_at.split('.')[0]);
+                    const formattedDate = formatTimestamp(parseFloat(row.created_at));
                     return `${row.game_id} - ${formattedDate}`;
                 });
                 resolve(gameList);
@@ -204,7 +204,7 @@ export const saveGame = (table: PokerTable) => {
     const filePath = path.resolve(`./src/data/games/${logs}.json`);
     fs.writeFileSync(path.resolve(filePath), JSON.stringify(table.gameChat.asArray()));
 
-    db.run(query, [table.gameId, table.players, logs, Date.now()], (err) => {
+    db.run(query, [table.gameId, table.players.toString(), logs, Date.now()], (err) => {
         if (err) LogManager.getInstance().log(`Error inserting or updating game: ${err}`, 3);
         else LogManager.getInstance().log(`Game created successfully: ${table.gameId}`, 1);
     });
