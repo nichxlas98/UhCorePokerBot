@@ -55,7 +55,7 @@ export default new Command({
             const filePath = path.resolve(`./src/data/games/${game.chatLogs}.json`);
             try {
                 const fileContent = fs.readFileSync(filePath, 'utf8');
-                const modifiedContent = fileContent.replace(/\[|\]/g, '');
+                const modifiedContent = fileContent.replace(/\[|\]/g, '').replaceAll(',', '\n');
         
                 const txtFilePath = path.resolve(`./src/data/games/${game.chatLogs}.txt`);
                 fs.writeFileSync(txtFilePath, modifiedContent, 'utf8');
