@@ -209,7 +209,7 @@ export const saveGame = (table: PokerTable) => {
 };
 
 export const getStats = (userId: string): PlayerStats | null => {
-    const query = 'SELECT * FROM stats WHERE user_id = ?';
+    const query = 'SELECT * FROM gamestats WHERE user_id = ?';
 
     db.get(query, [userId], (err, existingUser: any) => {
         if (err) {
@@ -233,7 +233,7 @@ export const getStats = (userId: string): PlayerStats | null => {
 }
 
 export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number) => {
-    const checkIfExistsQuery = "SELECT * FROM stats WHERE user_id = ?";
+    const checkIfExistsQuery = "SELECT * FROM gamestats WHERE user_id = ?";
 
     db.get(checkIfExistsQuery, [userId], (err, existingUser: any) => {
         if (err) {
@@ -243,7 +243,7 @@ export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number)
 
         if (!existingUser) {
             // User does not exist, insert
-            const insertQuery = 'INSERT INTO stats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?)';
+            const insertQuery = 'INSERT INTO gamestats (user_id, wins, losses, winnings) VALUES (?, ?, ?, ?)';
 
             db.run(insertQuery, [
                 userId, winOrLoss ? 1 : 0, winOrLoss ? 0 : 1, winnings
@@ -255,7 +255,7 @@ export const saveStats = (userId: string, winOrLoss: boolean, winnings?: number)
         }
 
         // User exists, update
-        const updateQuery = `UPDATE stats SET 
+        const updateQuery = `UPDATE gamestats SET 
         wins = ?, losses = ?, winnings = ? WHERE user_id = ?`;
     
         const wins = winOrLoss ? existingUser.wins + 1 : existingUser.wins;
