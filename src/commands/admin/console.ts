@@ -36,7 +36,6 @@ export default new Command({
             if (!games) {
                 return interaction.followUp({ content: "No games found.", ephemeral: true });
             }
-
             
             fs.writeFile('all-games.txt', games.toString().replace("[", "").replace("]", "").replaceAll(",", "\n"), async (err) => {
                 if (err) throw err;

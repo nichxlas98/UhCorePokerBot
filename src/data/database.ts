@@ -5,6 +5,7 @@ import { Client } from 'discord.js';
 import PokerUser from '../models/PokerUser';
 import { LogManager } from '../managers/LogManager';
 import PokerTable from '../models/PokerTable';
+import { formatTimestamp } from '../utils/MessageUtils';
 
 interface Game {
     gameId: number;
@@ -149,7 +150,10 @@ export const getGameList = (): Promise<string[]> => {
                 LogManager.getInstance().log('Error getting game list.', 3);
                 reject(err);
             } else {
-                const gameList = rows.map((row: any) => row.game_id + ' - ' + row.created_at);
+                const gameList = rows.map((row: any) => {
+                    const formattedDate = formatTimestamp(row.created_at);
+                    return `${row.game_id} - ${formattedDate}`;
+                });
                 resolve(gameList);
             }
         });
@@ -221,7 +225,7 @@ export const getStats = (userId: string): Promise<PlayerStats | null> => {
                     losses: existingUser.losses,
                     winnings: existingUser.winnings
                 };
-                
+
                 resolve(playerStats);
             } else {
                 resolve(null);
