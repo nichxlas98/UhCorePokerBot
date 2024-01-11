@@ -151,7 +151,7 @@ export const getGameList = (): Promise<string[]> => {
                 reject(err);
             } else {
                 const gameList = rows.map((row: any) => {
-                    const formattedDate = formatTimestamp(row.created_at);
+                    const formattedDate = formatTimestamp(row.created_at.split('.')[0]);
                     return `${row.game_id} - ${formattedDate}`;
                 });
                 resolve(gameList);
