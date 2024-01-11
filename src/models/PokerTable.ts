@@ -381,7 +381,7 @@ class PokerTable {
 
             this.sendEvent(revealMessage);
             this.postChat('**[GAME]** Starting a new game in 20 seconds. Please wait.');
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (playersAlive.asArray().length >= 2 && this.winningPool > 0) {
                     this.sendEvent();
                     this.winningPool = 0;
@@ -426,7 +426,7 @@ class PokerTable {
                     }
                 });
     
-                this.channel.send('**[GAME]** Game ended (lack of players/empty pot)...\nThis channel will be deleted in 60 seconds!');
+                await this.channel.send('**[GAME]** Game ended (lack of players/empty pot)...\nThis channel will be deleted in 60 seconds!');
                 setTimeout(() => {
                     PokerTable.deleteTable(this);
                 }, 60 * 1000);
