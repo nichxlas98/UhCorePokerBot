@@ -1,6 +1,7 @@
-import PokerTable from "../models/PokerTable";
+import PokerRoom from "../poker/PokerRoom";
 import PokerUser from "../models/PokerUser";
 import { Event } from "../structures/Event";
+import PokerController from "../poker/PokerController";
 
 export default new Event("messageCreate", async (message) => {
     if (message.author.bot) {
@@ -17,9 +18,9 @@ export default new Event("messageCreate", async (message) => {
         return;
     }
 
-    const foundTable = PokerTable.getTables().find(table => table.joined.contains(pokerUser.userName));
+    const foundTable = PokerController.getRooms().find(table => table.joined.contains(pokerUser.userName));
     if (!foundTable) {
-        const sentInPokerRoom = PokerTable.getTables().find(table => table.gameId === message.channel.id);
+        const sentInPokerRoom = PokerController.getRooms().find(table => table.gameId === message.channel.id);
 
         if (sentInPokerRoom)  await message.delete();
         return;
