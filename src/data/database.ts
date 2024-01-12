@@ -316,7 +316,7 @@ export const saveCards = async (cards: string[], cardUrl: string): Promise<void>
 
         if (!existingCards) {
             // Cards do not exist, insert
-            const insertQuery = 'INSERT INTO saved_cards (cards_string, card_url) VALUES (?, ?)';
+            const insertQuery = 'INSERT INTO saved_cards (cards_string, cards_url) VALUES (?, ?)';
             await new Promise<void>((resolve, reject) => {
                 db.run(insertQuery, [cardsAsString, cardUrl], (err) => {
                     if (err) {
@@ -350,7 +350,7 @@ export const getCardsUrl = async (cards: string[]): Promise<string> | null => {
             }
 
             if (row) {
-                resolve(row.card_url);
+                resolve(row.cards_url);
                 return;
             }
             
