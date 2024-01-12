@@ -1,9 +1,11 @@
 import { MessageEmbed } from "discord.js";
-import PokerTable from "../../models/PokerTable";
+import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 import { getUrlFromImages } from "../../render";
+import { GameState } from "../../enums/States";
+import PokerController from "../../poker/PokerController";
 
 export default new Command({
     name: "hand",
@@ -16,13 +18,13 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('Your account must be verified to view your hand.') ], ephemeral: true });
         }
 
-        const foundTable = PokerTable.getTables().find(table => table.joined.contains(user.userName));
+        const foundTable = PokerController.getRooms().find(table => table.joined.contains(user.userName));
         if (!foundTable) {
             return interaction.followUp({ embeds: [ getErrorEmbed('You are not in a poker game.') ], ephemeral: true });
         }
 
         const pokerPlayer = foundTable.players.find(player => player.username === user.userName);
-        if (!pokerPlayer) {
+        if (!pokerPlayer || foundTable.gameState === GameState.STARTING) {
             return interaction.followUp({ embeds: [ getErrorEmbed("The game hasn't started yet.") ], ephemeral: true });
         }
 

@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import PokerTable from "../../models/PokerTable";
+import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { GamePhase, GameState, PlayerAction } from "../../enums/States";
@@ -7,6 +7,7 @@ import { getErrorEmbed } from "../../utils/MessageUtils";
 import ConfigurationManager, { Config } from "../../managers/ConfigManager";
 import PokerPlayer from "../../models/PokerPlayer";
 import { ExtendedInteraction } from "../../typings/Command";
+import PokerController from "../../poker/PokerController";
 
 
 export default new Command({
@@ -30,13 +31,13 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('Your account must be verified to raise a bet.') ], ephemeral: true });
         }
 
-        const foundTable = PokerTable.getTables().find(table => table.joined.contains(foundPlayer.userName));
+        const foundTable = PokerController.getRooms().find(table => table.joined.contains(foundPlayer.userName));
         if (!foundTable) {
             return interaction.followUp({ embeds: [ getErrorEmbed('You are not in a poker game.') ], ephemeral: true });
         }
 
         const pokerPlayer = foundTable.players.find(player => player.username === foundPlayer.userName);
-        if (!pokerPlayer) {
+        if (!pokerPlayer || foundTable.gameState === GameState.STARTING) {
             return interaction.followUp({ embeds: [ getErrorEmbed("The game hasn't started yet.") ], ephemeral: true });
         }
 
@@ -60,7 +61,7 @@ export default new Command({
     },
 });
 
-const handleBet = (foundTable: PokerTable, pokerPlayer: PokerPlayer, pokerUser: PokerUser, amount: number, action: PlayerAction) => {
+const handleBet = async (foundTable: PokerRoom, pokerPlayer: PokerPlayer, pokerUser: PokerUser, amount: number, action: PlayerAction) => {
     pokerPlayer.cash -= amount;
     pokerPlayer.currentBet = amount;
     pokerPlayer.lastAction = action;
@@ -70,11 +71,11 @@ const handleBet = (foundTable: PokerTable, pokerPlayer: PokerPlayer, pokerUser: 
     foundTable.winningPool += amount;
 
     const raiseOrStart = action === PlayerAction.RAISE ? "raised to" : "placed a starting bet of";
-    foundTable.postChat(`**[GAME]** **${pokerUser.userName}** ${raiseOrStart} $${amount}.`);
-    foundTable.nextPlayerTurn(pokerPlayer);
+    await foundTable.chatManager.postChat(`**[GAME]** **${pokerUser.userName}** ${raiseOrStart} $${amount}.`);
+    foundTable.nextTurn(pokerPlayer);
 }
 
-const placeStartingBet = (interaction: ExtendedInteraction, foundTable: PokerTable, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {    
+const placeStartingBet = (interaction: ExtendedInteraction, foundTable: PokerRoom, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {    
     if (amount > config.maxStart) {
         return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum starting bet is $${config.maxStart}.`) ], ephemeral: true });
     }
@@ -86,7 +87,7 @@ const placeStartingBet = (interaction: ExtendedInteraction, foundTable: PokerTab
     handleBet(foundTable, pokerPlayer, foundPlayer, amount, PlayerAction.START);
 };
 
-const raiseCurrentBet = (interaction: ExtendedInteraction, foundTable: PokerTable, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {
+const raiseCurrentBet = (interaction: ExtendedInteraction, foundTable: PokerRoom, foundPlayer: PokerUser, pokerPlayer: PokerPlayer, config: Config, amount: number) => {
     if (amount > config.maxRaise) {
         return interaction.followUp({ embeds: [ getErrorEmbed(`The maximum raise amount is $${config.maxRaise}.`) ], ephemeral: true });
     }

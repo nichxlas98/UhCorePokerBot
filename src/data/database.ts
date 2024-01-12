@@ -4,7 +4,7 @@ import fs from 'fs';
 import { Client } from 'discord.js';
 import PokerUser from '../models/PokerUser';
 import { LogManager } from '../managers/LogManager';
-import PokerTable from '../models/PokerTable';
+import PokerRoom from '../poker/PokerRoom';
 import { formatTimestamp } from '../utils/MessageUtils';
 
 interface Game {
@@ -193,7 +193,7 @@ export const loadGame = async (gameId: string): Promise<Game | null> => {
 };
 
 
-export const saveGame = (table: PokerTable) => {
+export const saveGame = (table: PokerRoom) => {
     const query = `INSERT INTO games (game_id, players, chat_logs, created_at) VALUES (?, ?, ?, ?)`;
 
     const currentTimestamp = Date.now();
@@ -209,7 +209,7 @@ export const saveGame = (table: PokerTable) => {
 
     const logs = `${dateString}-${table.gameId}`;
     const filePath = path.resolve(`./src/data/games/${logs}.json`);
-    fs.writeFileSync(path.resolve(filePath), JSON.stringify(table.gameChat.asArray()));
+    fs.writeFileSync(path.resolve(filePath), JSON.stringify(table.chatManager.getGameChat().asArray()));
 
     db.run(query, [table.gameId, table.players.toString(), logs, Date.now()], (err) => {
         if (err) LogManager.getInstance().log(`Error inserting or updating game: ${err}`, 3);
