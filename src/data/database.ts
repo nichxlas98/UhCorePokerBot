@@ -4,7 +4,7 @@ import fs from 'fs';
 import { Client } from 'discord.js';
 import PokerUser from '../models/PokerUser';
 import { LogManager } from '../managers/LogManager';
-import PokerTable from '../models/PokerTable';
+import PokerRoom from '../poker/PokerRoom';
 import { formatTimestamp } from '../utils/MessageUtils';
 
 interface Game {
@@ -193,7 +193,7 @@ export const loadGame = async (gameId: string): Promise<Game | null> => {
 };
 
 
-export const saveGame = (table: PokerTable) => {
+export const saveGame = (table: PokerRoom) => {
     const query = `INSERT INTO games (game_id, players, chat_logs, created_at) VALUES (?, ?, ?, ?)`;
 
     const currentTimestamp = Date.now();
