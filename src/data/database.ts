@@ -342,7 +342,7 @@ export const getCardsUrl = async (cards: string[]): Promise<string> | null => {
     const cardsAsString = cards.toString();
 
     return new Promise((resolve, reject) => {
-        const query = 'SELECT card_url FROM saved_cards WHERE cards_string = ?';
+        const query = 'SELECT cards_url FROM saved_cards WHERE cards_string = ?';
 
         db.get(query, [cardsAsString], (err, row: any) => {
             if (err) {
