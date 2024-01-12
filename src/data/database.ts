@@ -209,7 +209,7 @@ export const saveGame = (table: PokerRoom) => {
 
     const logs = `${dateString}-${table.gameId}`;
     const filePath = path.resolve(`./src/data/games/${logs}.json`);
-    fs.writeFileSync(path.resolve(filePath), JSON.stringify(table.gameChat.asArray()));
+    fs.writeFileSync(path.resolve(filePath), JSON.stringify(table.chatManager.getGameChat().asArray()));
 
     db.run(query, [table.gameId, table.players.toString(), logs, Date.now()], (err) => {
         if (err) LogManager.getInstance().log(`Error inserting or updating game: ${err}`, 3);
