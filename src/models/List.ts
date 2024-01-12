@@ -100,6 +100,10 @@ class List<T> {
     reduce<U>(callback: (accumulator: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U {
       return this.items.reduce(callback, initialValue);
     }
+
+    clear(): void {
+      this.items = [];
+    }
 }
 
 export default List;
