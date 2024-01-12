@@ -1,9 +1,10 @@
 import { MessageEmbed } from "discord.js";
 import { Command } from "../../structures/Command";
 import PokerUser from "../../models/PokerUser";
-import PokerTable from "../../models/PokerTable";
+import PokerRoom from "../../poker/PokerRoom";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 import ConfigurationManager from "../../managers/ConfigManager";
+import PokerController from "../../poker/PokerController";
 
 export default new Command({
     name: "joingame",
@@ -38,14 +39,14 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('Your account must be verified to join a poker game.') ], ephemeral: true });
         }
 
-        PokerTable.getTables().forEach(table => {
+        PokerController.getRooms().forEach(table => {
             if (table.joined.contains(user.userName)) {
                 return interaction.followUp({ embeds: [ getErrorEmbed('You are already in a poker game.') ], ephemeral: true });
             }
         });
 
         const gameid = interaction.options.getString("gameid");
-        const foundTable = PokerTable.getInstanceById(gameid);
+        const foundTable = PokerController.getInstanceById(gameid);
 
         if (!foundTable) {
             return interaction.followUp({ embeds: [ getErrorEmbed('No poker game with that ID was found.') ], ephemeral: true });

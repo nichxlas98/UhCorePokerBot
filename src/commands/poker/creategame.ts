@@ -1,10 +1,11 @@
 import { MessageEmbed } from "discord.js";
-import PokerTable from "../../models/PokerTable";
+import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 import { LogManager } from "../../managers/LogManager";
 import ConfigurationManager from "../../managers/ConfigManager";
+import PokerController from "../../poker/PokerController";
 
 export default new Command({
     name: "creategame",
@@ -25,13 +26,13 @@ export default new Command({
         const guild = interaction.guild;
         let gameId: string;
 
-        await guild.channels.create(`poker-room-${PokerTable.getTables().length() + 1}`, {
+        await guild.channels.create(`poker-room-${PokerController.getRooms().length() + 1}`, {
             type: 'GUILD_TEXT'
         }).then(async (channel) => {
             gameId = channel.id;
             await channel.setParent('1191808100609568808');
             await channel.permissionOverwrites.edit(guild.roles.everyone.id, { VIEW_CHANNEL: false });
-            new PokerTable(gameId, channel);
+            new PokerRoom(gameId, channel);
         });
 
         LogManager.getInstance().log(`Poker game created: ${gameId} by ${user.userName}`, 1);

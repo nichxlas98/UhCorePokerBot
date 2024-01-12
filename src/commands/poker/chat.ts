@@ -1,8 +1,9 @@
 import { MessageEmbed } from "discord.js";
-import PokerTable from "../../models/PokerTable";
+import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";
+import PokerController from "../../poker/PokerController";
 
 export default new Command({
     name: "chat",
@@ -25,7 +26,7 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('Your account must be verified to chat.') ], ephemeral: true });
         }
 
-        const foundTable = PokerTable.getTables().find(table => table.joined.contains(pokerUser.userName));
+        const foundTable = PokerController.getRooms().find(table => table.joined.contains(pokerUser.userName));
         if (!foundTable) {
             return interaction.followUp({ embeds: [ getErrorEmbed('You are not in a poker game.') ], ephemeral: true });
         }

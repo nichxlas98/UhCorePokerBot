@@ -1,7 +1,8 @@
-import PokerTable from "../../models/PokerTable";
+import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";
+import PokerController from "../../poker/PokerController";
 
 export default new Command({
     name: "leavegame",
@@ -14,7 +15,7 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('Your account must be verified to leave a poker game.') ], ephemeral: true });
         }
 
-        const foundTable = PokerTable.getTables().find(table => table.joined.contains(user.userName));
+        const foundTable = PokerController.getRooms().find(table => table.joined.contains(user.userName));
         if (!foundTable) {
             return interaction.followUp({ embeds: [ getErrorEmbed('You are not in a poker game.') ], ephemeral: true });
         }

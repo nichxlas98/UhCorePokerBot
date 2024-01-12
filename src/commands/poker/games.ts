@@ -1,7 +1,8 @@
 import { MessageEmbed } from "discord.js";
-import PokerTable from "../../models/PokerTable";
+import PokerRoom from "../../poker/PokerRoom";
 import { Command } from "../../structures/Command";
 import ConfigurationManager from "../../managers/ConfigManager";
+import PokerController from "../../poker/PokerController";
 
 export default new Command({
     name: "games",
@@ -9,7 +10,7 @@ export default new Command({
     run: async ({ interaction }) => {
         await interaction.deleteReply();
 
-        const tables = PokerTable.getTables().asArray();
+        const tables = PokerController.getRooms().asArray();
         if (tables.length === 0) {
             return interaction.followUp({ embeds: [ new MessageEmbed().setTitle('Poker Rooms').setDescription('No poker rooms found.') ], ephemeral: true });
         }

@@ -1,23 +1,22 @@
+import { GameState } from "../../enums/States";
 import PokerController from "../../poker/PokerController";
 import PokerRoom from "../../poker/PokerRoom";
 import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
 export default new Command({
-
-    name: "endgame",
-    description: "Ends the current poker game.",
+    name: "startgame",
+    description: "Starts a poker game.",
     options: [
         {
             name: "gameid",
-            description: "The ID of the poker game to end.",
+            description: "The ID of the poker game to start.",
             type: 3,
-            required: true
         }
     ],
     run: async ({ interaction }) => {
         await interaction.deleteReply();
-
+        
         if (!(interaction.member.permissions.has('ADMINISTRATOR'))) {
             return interaction.followUp({ embeds: [ getErrorEmbed("You do not have permission to use this command.") ], ephemeral: true });
         }
@@ -29,7 +28,11 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed('No poker game with that ID was found.') ], ephemeral: true });
         }
 
-        await interaction.followUp({ embeds: [ getErrorEmbed('Poker game forcefully-ended.') ], ephemeral: true }); 
-        await PokerController.deleteRoom(foundTable);
-    },  
+        if (foundTable.gameState !== GameState.WAITING) {
+            return interaction.followUp({ embeds: [ getErrorEmbed('Poker game has already started/starting.') ], ephemeral: true });
+        }
+
+        foundTable.start();
+        await interaction.followUp({ embeds: [ getErrorEmbed('Poker game forcefully-started.') ], ephemeral: true });
+    },
 });
