@@ -298,7 +298,7 @@ export const saveStats = async (userId: string, winOrLoss: boolean, winnings?: n
 };
 
 export const saveCards = async (cards: string[], cardUrl: string): Promise<void> => {
-    const checkIfExistsQuery = "SELECT * FROM cards WHERE cards_string = ?";
+    const checkIfExistsQuery = "SELECT * FROM saved_cards WHERE cards_string = ?";
 
     const cardsAsString = cards.toString();
 
@@ -316,7 +316,7 @@ export const saveCards = async (cards: string[], cardUrl: string): Promise<void>
 
         if (!existingCards) {
             // Cards do not exist, insert
-            const insertQuery = 'INSERT INTO cards (cards_string, card_url) VALUES (?, ?)';
+            const insertQuery = 'INSERT INTO saved_cards (cards_string, card_url) VALUES (?, ?)';
             await new Promise<void>((resolve, reject) => {
                 db.run(insertQuery, [cardsAsString, cardUrl], (err) => {
                     if (err) {
@@ -342,7 +342,7 @@ export const getCardsUrl = async (cards: string[]): Promise<string> | null => {
     const cardsAsString = cards.toString();
 
     return new Promise((resolve, reject) => {
-        const query = 'SELECT card_url FROM cards WHERE cards_string = ?';
+        const query = 'SELECT card_url FROM saved_cards WHERE cards_string = ?';
 
         db.get(query, [cardsAsString], (err, row: any) => {
             if (err) {
