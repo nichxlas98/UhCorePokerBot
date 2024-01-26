@@ -52,7 +52,7 @@ class ChatManager {
         return new MessageEmbed()
             .setTitle(`Game Room — (${this.gameId})`)
             .setColor(0x0096FF)
-            .setImage(pokerRoom.cardsManager ? pokerRoom.cardsManager.communityCardsUrl : null);
+            .setImage(pokerRoom.cardsManager ? pokerRoom.cardsManager.communityCardsUrl : '');
     }
 
     async postChat(message?: string) {
