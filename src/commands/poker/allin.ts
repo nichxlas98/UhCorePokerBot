@@ -42,7 +42,7 @@ export default new Command({
 
         pokerPlayer.lastAction = PlayerAction.ALL_IN;
 
-        await foundTable.chatManager.postChat(`**[GAME]** **${user.userName}** went all-in.`);
+        await foundTable.chatManager.postChat(`**[GAME]** **${user.userName}** went all-in. ($${foundTable.lastBet}).`);
         foundTable.nextTurn(pokerPlayer);
     },
 });

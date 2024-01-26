@@ -45,7 +45,7 @@ export default new Command({
 
         foundTable.winningPool += foundTable.lastBet;
 
-        await foundTable.chatManager.postChat(`**[GAME]** **${user.userName}** called.`);
+        await foundTable.chatManager.postChat(`**[GAME]** **${user.userName}** called. ($${foundTable.lastBet}).`);
         foundTable.nextTurn(pokerPlayer);
     },
 });
