@@ -180,7 +180,7 @@ class PokerRoom {
 
         if (player.playerState === PlayerState.FOLDED || player.playerState === PlayerState.QUIT || player.playerState === PlayerState.BUSTED || player.lastAction === PlayerAction.ALL_IN) {
             // Player quit or folded, skip them.
-            if (player.lastAction === PlayerAction.ALL_IN) {
+            if (player.lastAction === PlayerAction.ALL_IN && player.playerState !== PlayerState.BUSTED) {
                 this.chatManager.postChat(`**[GAME]** **${player.username}** is all-in. Their turn was skipped.`);
             }
 
