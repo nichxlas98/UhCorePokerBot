@@ -146,6 +146,9 @@ class PokerRoom {
         clearTimeout(this.autoFoldTimeout);
         if (this.turn === 0) {
             this.gameManager.handleNewRound(); // If the round is just starting, generate the cards etc.
+            if (lastPlayer && this.gamePhase === GamePhase.BLIND) {
+                this.chatManager.sendTurnMessage(lastPlayer, `They need to place their starting bet (/call or /raise). \nThe minimum bet is $50.`);
+            }
         }
 
         if (this.gamePhase === GamePhase.PRE_FLOP && this.turn === 0) {

@@ -200,6 +200,7 @@ class GameManager { // update player turns, update game rounds
         pokerRoom.winningPool = 0;
         pokerRoom.lastBet = 0;
         pokerRoom.gamePhase = GamePhase.END;
+        pokerRoom.gameState = GameState.RUNNING;
     }
 
     private startNewGame() {
