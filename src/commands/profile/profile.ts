@@ -12,16 +12,17 @@ const viewProfile = async (interaction: ExtendedInteraction, foundUser: PokerUse
         return interaction.followUp({ embeds: [ getErrorEmbed('User not found.') ], ephemeral: true });
     }
 
+    const sender = PokerUser.findUserByUserId(interaction.user.id);
     const playerStats = await getStats(foundUser.userId) || { userId: foundUser.userId, wins: 0, losses: 0, winnings: 0 };
     //const winLossRatio = playerStats.wins / (playerStats.losses + playerStats.wins) * 100;
 
-    const embed = createProfileEmbed(foundUser, playerStats, interaction, admin);
+    const embed = createProfileEmbed(sender, foundUser, playerStats, interaction, admin);
 
     await interaction.followUp({ embeds: [ embed ], ephemeral: true });
     LogManager.getInstance().log(`Profile viewed: ${foundUser.userName} (${foundUser.userId}), by ${PokerUser.findUserByUserId(interaction.user.id).userName} (${interaction.user.username})`, 1);
 };
 
-const createProfileEmbed = (foundUser: PokerUser, playerStats: any, interaction: ExtendedInteraction, admin: boolean) => {
+const createProfileEmbed = (sender: PokerUser, foundUser: PokerUser, playerStats: any, interaction: ExtendedInteraction, admin: boolean) => {
     const member = interaction.guild.members.cache.get(foundUser.userId);
     const title = admin ? 'Game Profile' : 'Profile';
     const authorName = admin ? `${foundUser.userName} (( ${member.user.username} ))` : `${foundUser.userName} (( Private ))`;
@@ -31,7 +32,7 @@ const createProfileEmbed = (foundUser: PokerUser, playerStats: any, interaction:
     const embed = new MessageEmbed()
         .setTitle(title)
         .setAuthor({ name: authorName, iconURL: admin ? member.user.displayAvatarURL() : profileUrl })
-        .setDescription(createProfileDescription(foundUser, playerStats, admin))
+        .setDescription(createProfileDescription(sender, foundUser, playerStats, admin))
         .setColor(0x7289DA);
 
     if (admin) {
@@ -45,8 +46,15 @@ const createProfileEmbed = (foundUser: PokerUser, playerStats: any, interaction:
     return embed;
 };
 
-const createProfileDescription = (foundUser: PokerUser, playerStats: any, admin: boolean) => {
+const createProfileDescription = (sender: PokerUser, foundUser: PokerUser, playerStats: any, admin: boolean) => {
     const description = `\n**Username**: ${foundUser.userName}\n**Age**: ${foundUser.age}\n\n`;
+
+    if (sender && sender.userId === foundUser.userId) {
+        return description +
+            `**Balance**: $${foundUser.balance}\n**W/L Ratio**: ${playerStats.wins / (playerStats.losses + playerStats.wins) * 100}%\n` +
+            `**Wins**: ${playerStats.wins}\n**Losses**: ${playerStats.losses}\n**Winnings**: $${playerStats.winnings}\n\n` +
+            `**Verified**: ${foundUser.verified ? 'Yes' : 'No'}\n**Created**: ${foundUser.createdAtFormatted}`;
+    }
 
     if (admin) {
         return description +
