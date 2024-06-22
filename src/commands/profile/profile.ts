@@ -56,8 +56,8 @@ const createProfileDescription = (foundUser: PokerUser, playerStats: any, admin:
             `**Verified**: ${foundUser.verified ? 'Yes' : 'No'}\n**Created**: ${foundUser.createdAtFormatted}`;
     } else {
         return description +
-            `**Balance**: $${foundUser.balance}\n**W/L Ratio**: ${playerStats.wins / (playerStats.losses + playerStats.wins) * 100}%\n` +
-            `**Wins**: ${playerStats.wins}\n**Losses**: ${playerStats.losses}\n**Winnings**: $${playerStats.winnings}\n\n` +
+            `**W/L Ratio**: ${playerStats.wins / (playerStats.losses + playerStats.wins) * 100}%\n` +
+            `**Wins**: ${playerStats.wins}\n**Losses**: ${playerStats.losses}\n\n` +
             `**Verified**: ${foundUser.verified ? 'Yes' : 'No'}\n**Created**: ${foundUser.createdAtFormatted}`;
     }
 };

@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-​import { Database } from 'sqlite3';
+import { Database } from 'sqlite3';
 import { Client } from 'discord.js';
 import PokerUser from '../models/PokerUser';
 import { LogManager } from '../managers/LogManager';
