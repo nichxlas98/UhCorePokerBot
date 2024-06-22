@@ -40,6 +40,10 @@ export default new Command({
             return interaction.followUp({ embeds: [ getErrorEmbed("The game hasn't started yet.") ], ephemeral: true });
         }
 
+        if (amount < foundTable.lastBet) {
+            return interaction.followUp({ embeds: [ getErrorEmbed('You cannot raise less than the last bet.') ], ephemeral: true });
+        }
+
         if (amount >= pokerPlayer.cash) {
             return interaction.followUp({ embeds: [ getErrorEmbed('You cannot raise more than, or all you have. You can go all-in instead.') ], ephemeral: true });
         }
