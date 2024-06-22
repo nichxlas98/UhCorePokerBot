@@ -49,10 +49,12 @@ export class ExtendedClient extends Client {
         );
         for (const filePath of commandFiles) {
             const command: CommandType = await this.importFile(filePath);
-            if (!command.name) {
-                console.log(`No command name specified in ${filePath}`);
+            if (!command) {
+                console.log(`Invalid command specified in ${filePath}`);
                 continue;
             }
+            if (!command.name) continue;
+
 
             console.log(command);
 
