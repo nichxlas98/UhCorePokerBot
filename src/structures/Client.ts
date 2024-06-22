@@ -44,17 +44,21 @@ export class ExtendedClient extends Client {
     async registerModules() {        
         // Commands
         const slashCommands: ApplicationCommandDataResolvable[] = [];
-        const commandFiles = await globPromise(
+        const commandFiles = globPromise(
             `${__dirname}/../commands/*/*{.ts,.js}`
         );
-        commandFiles.forEach(async (filePath) => {
+        for (const filePath of commandFiles) {
             const command: CommandType = await this.importFile(filePath);
-            if (!command.name) return;
+            if (!command.name) {
+                console.log(`No command name specified in ${filePath}`);
+                continue;
+            }
+
             console.log(command);
 
             this.commands.set(command.name, command);
             slashCommands.push(command);
-        });
+        }
 
         this.on("ready", () => {
             this.registerCommands({
@@ -64,14 +68,14 @@ export class ExtendedClient extends Client {
         });
 
         // Event
-        const eventFiles = await globPromise(
+        const eventFiles = globPromise(
             `${__dirname}/../events/*{.ts,.js}`
         );
-        eventFiles.forEach(async (filePath) => {
+        for (const filePath of eventFiles) {
             const event: Event<keyof ClientEvents> = await this.importFile(
                 filePath
             );
             this.on(event.event, event.run);
-        });
+        }
     }
 }
