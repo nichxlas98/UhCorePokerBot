@@ -1,3 +1,4 @@
+import PokerRoom from "../../poker/PokerRoom";
 import { MessageEmbed } from "discord.js";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";

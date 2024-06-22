@@ -1,3 +1,4 @@
+import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { GamePhase, GameState, PlayerAction } from "../../enums/States";

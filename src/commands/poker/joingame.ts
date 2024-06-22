@@ -1,3 +1,4 @@
+import PokerRoom from "../../poker/PokerRoom";
 import { Command } from "../../structures/Command";
 import PokerUser from "../../models/PokerUser";
 import { getErrorEmbed } from "../../utils/MessageUtils";

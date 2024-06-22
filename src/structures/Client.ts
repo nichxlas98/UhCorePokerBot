@@ -55,7 +55,6 @@ export class ExtendedClient extends Client {
             }
             if (!command.name) continue;
 
-
             console.log(command);
 
             this.commands.set(command.name, command);

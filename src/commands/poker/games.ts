@@ -1,3 +1,4 @@
+import PokerRoom from "../../poker/PokerRoom";
 import { MessageEmbed } from "discord.js";
 import { Command } from "../../structures/Command";
 import ConfigurationManager from "../../managers/ConfigManager";

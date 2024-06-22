@@ -4,7 +4,7 @@ import { Command } from "../../structures/Command";
 import { LogManager } from "../../managers/LogManager";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
-new Command({
+export default new Command({
     name: "request",
     description: "Request profile verification.",
     options: [
