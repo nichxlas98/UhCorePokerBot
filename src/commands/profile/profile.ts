@@ -86,7 +86,8 @@ const findUser = (user: string, interaction: ExtendedInteraction) => {
         if (interaction.member.permissions.has('ADMINISTRATOR')) {
             return PokerUser.findUserByUserId(user);
         } else {
-            interaction.followUp({ embeds: [ getErrorEmbed('Insufficient permissions.') ], ephemeral: true });
+            interaction.followUp({ embeds: [ getErrorEmbed('Insufficient permissions.') ], ephemeral: true })
+                .then(() => setTimeout(() => interaction.deleteReply(), 5000));
             return null;
         }
     } else {

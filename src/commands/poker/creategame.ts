@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";

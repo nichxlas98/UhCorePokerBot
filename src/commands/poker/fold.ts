@@ -1,5 +1,4 @@
 import { GameState, PlayerAction, PlayerState } from "../../enums/States";
-import PokerRoom from "../../poker/PokerRoom";
 import PokerUser from "../../models/PokerUser";
 import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";

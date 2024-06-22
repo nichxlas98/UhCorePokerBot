@@ -36,7 +36,7 @@ export default new Command({
         const trackerChannel = interaction.guild?.channels.cache.get('1192565157352718416');
         const issueChannel = interaction.guild?.channels.cache.get('1192636010652246067');
 
-        (issueChannel as TextChannel)?.send({ embeds: [ embed ] });
+        await (issueChannel as TextChannel)?.send({embeds: [embed]});
         const msg = (trackerChannel as TextChannel)?.send({ embeds: [
             {
                 title: 'Bug Tracker',
@@ -45,7 +45,7 @@ export default new Command({
             }
         ]});
 
-        (await msg).react('✅');
+        await (await msg).react('✅');
 
         return interaction.followUp({ embeds: [ new MessageEmbed().setTitle('Reported!').setDescription('Thank you for your feedback.') ], ephemeral: true });
     },

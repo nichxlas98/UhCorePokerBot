@@ -1,7 +1,5 @@
-import { MessageEmbed } from "discord.js";
 import { Command } from "../../structures/Command";
 import PokerUser from "../../models/PokerUser";
-import PokerRoom from "../../poker/PokerRoom";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 import ConfigurationManager from "../../managers/ConfigManager";
 import PokerController from "../../poker/PokerController";

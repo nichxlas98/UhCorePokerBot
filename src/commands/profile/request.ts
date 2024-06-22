@@ -4,7 +4,7 @@ import { Command } from "../../structures/Command";
 import { LogManager } from "../../managers/LogManager";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
-export default new Command({
+new Command({
     name: "request",
     description: "Request profile verification.",
     options: [
@@ -71,13 +71,15 @@ export default new Command({
 
         const verifyChannel = await interaction.guild.channels.fetch('1192486674916184175');
         if (verifyChannel) {
-            (verifyChannel as TextChannel).send({ content: '||<@&1191654216482160642>||', embeds: [
-                {
-                    title: 'Account Request',
-                    description: `<@${interaction.user.id}>'s requesting account verification. \n<@&1191654216482160642> will review it shortly.`,
-                    color: 0x7289DA
-                } 
-            ]});
+            await (verifyChannel as TextChannel).send({
+                content: '||<@&1191654216482160642>||', embeds: [
+                    {
+                        title: 'Account Request',
+                        description: `<@${interaction.user.id}>'s requesting account verification. \n<@&1191654216482160642> will review it shortly.`,
+                        color: 0x7289DA
+                    }
+                ]
+            });
         }
 
         await (channel as TextBasedChannel).send({ embeds: [ embed ] });

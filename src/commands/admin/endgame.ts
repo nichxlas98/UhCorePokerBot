@@ -1,5 +1,4 @@
 import PokerController from "../../poker/PokerController";
-import PokerRoom from "../../poker/PokerRoom";
 import { Command } from "../../structures/Command";
 import { getErrorEmbed } from "../../utils/MessageUtils";
 
